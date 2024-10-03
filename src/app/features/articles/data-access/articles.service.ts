@@ -5,7 +5,7 @@ import {from, Observable} from "rxjs";
 @Injectable({
   providedIn: 'root'
 })
-export class ArticlesService {
+export class                                                                                                                                                                                                                                                                                                                                              ArticlesService {
   private readonly dbService = inject(DbService);
 
   public getNews(): Observable<any[]> {

@@ -1,19 +1,10 @@
 export const articlesInitialState: ArticlesState = {
   articles: [
     {
-      id: 0,
       title: '',
-      summary: '',
-      content: '',
-      author: {
-        id: 0,
-        name: '',
-        profile_url: '',
-      },
-      published_at: '',
-      updated_at: '',
-      tags: [],
-      image_url: '',
+      description: '',
+      image: '',
+      email: '',
     },
   ],
   loading: false,
@@ -25,19 +16,24 @@ export interface ArticlesState {
 }
 
 export interface Articles {
-  id: number;
   title: string;
-  summary: string;
-  content: string;
-  author: Author;
-  published_at: string;
-  updated_at: string;
-  tags: string[];
-  image_url: string;
+  description: string;
+  image: string;
+  email: string;
 }
 
-export interface Author {
-  id: number;
-  name: string;
-  profile_url: string;
+export interface PaginatedArticlesResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export interface ArticlesListConfig {
+  search: string;
+  page: number;
+  limit: number;
+  sortField: string;
+  sortOrder: string;
 }
