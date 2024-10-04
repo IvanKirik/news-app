@@ -1,1 +1,14 @@
-<div>{{store() | json}}</div>
+<mat-form-field>
+  <input matInput type="text" [formControl]="searchControl">
+</mat-form-field>
+<div>
+  {{ searchSignal().search}}
+</div>
+<div>
+  @for (article of $articles(); track article) {
+    <h6>{{ article.title }}</h6>
+    <p>{{ article.description }}</p>
+    <img [src]="'http://localhost:3000/'+article.image" alt="Article Image" />
+  }
+</div>
+<mat-paginator></mat-paginator>

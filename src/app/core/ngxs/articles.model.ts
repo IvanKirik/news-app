@@ -8,11 +8,19 @@ export const articlesInitialState: ArticlesState = {
     },
   ],
   loading: false,
+  config: {
+    search: '',
+    page: null,
+    limit: null,
+    sortField: null,
+    sortOrder: null,
+  },
 };
 
 export interface ArticlesState {
   articles: Articles[];
   loading: boolean;
+  config: Nullable<ArticlesListConfig>;
 }
 
 export interface Articles {
@@ -37,3 +45,7 @@ export interface ArticlesListConfig {
   sortField: string;
   sortOrder: string;
 }
+
+export type Nullable<T> = {
+  [P in keyof T]?: T[P] | null;
+};

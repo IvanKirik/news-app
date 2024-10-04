@@ -1,28 +1,60 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, Signal } from '@angular/core';
-import {ArticlesService} from "../../data-access/articles.service";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  input,
+  OnInit,
+} from '@angular/core';
 import { ArticlesStore } from '../../../../core/ngxs/articles.store';
-import { JsonPipe } from '@angular/common';
+import { JsonPipe, NgForOf, NgOptimizedImage } from '@angular/common';
 import { Articles } from '../../../../core/ngxs/articles.model';
+import { MatFormField } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { DeepSignal } from '@ngrx/signals';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
+import { combineLatest, map } from 'rxjs';
 
 @Component({
   selector: 'app-article-list',
   standalone: true,
-  imports: [JsonPipe],
+  imports: [
+    JsonPipe,
+    MatFormField,
+    MatInput,
+    NgForOf,
+    NgOptimizedImage,
+    FormsModule,
+    ReactiveFormsModule,
+    MatPaginator,
+  ],
   templateUrl: './article-list.component.html',
   styleUrl: './article-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArticleListComponent implements OnInit {
-  private readonly articlesService = inject(ArticlesService);
+  private readonly fb = inject(FormBuilder);
   protected articlesStore = inject(ArticlesStore);
-  public store: Signal<Articles[]> = this.articlesStore.articles;
+  public $articles: DeepSignal<Articles[]> = this.articlesStore.articles;
+  public search = input<string>('');
+  public searchControl = this.fb.control('');
 
-  public ngOnInit() {
-    this.loadArticles().then((articles) => console.log(articles));
-    this.articlesStore.articles();
+  public searchSignal = this.articlesStore.config;
+
+  constructor() {
+    effect(() => {
+      console.log(this.searchSignal());
+    });
   }
 
-  async loadArticles() {
-    await this.articlesStore.loadAll();
+  public ngOnInit() {
+    this.articlesStore.loadAll({});
+    combineLatest([this.searchControl.valueChanges])
+      .pipe(map(([search]) => ({ search })))
+      .subscribe((obj) => {
+        this.articlesStore.updateFilters(obj);
+        this.articlesStore.loadAll(obj);
+      });
   }
 }
