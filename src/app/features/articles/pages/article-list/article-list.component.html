@@ -1,14 +1,30 @@
-<mat-form-field>
-  <input matInput type="text" [formControl]="searchControl">
-</mat-form-field>
-<div>
-  {{ searchSignal().search}}
+<div class="article-list-container">
+
+  <mat-form-field>
+    <input matInput type="text" [formControl]="searchControl">
+  </mat-form-field>
+  <div>
+    {{ searchSignal().search }}
+  </div>
+  <div class="articles">
+    @for (article of $articles(); track article) {
+      <mat-card class="article-item" routerLink="{{article.id}}">
+        <img class="article-item__image" mat-card-image [src]="'http://localhost:3000/'+article.image"
+             alt="Article Image" />
+        <mat-card-title class="article-item__title">{{ article.title }}</mat-card-title>
+        <mat-card-content class="article-item__description">{{ article.description }}
+        </mat-card-content>
+
+      </mat-card>
+    }
+  </div>
+  <div>
+
+
+    <p-paginator
+      (onPageChange)="onPageChange($event)"
+      [rows]="3"
+      [totalRecords]="$totalArticles()"
+      [rowsPerPageOptions]="[3, 6, 9]"/>
+  </div>
 </div>
-<div>
-  @for (article of $articles(); track article) {
-    <h6>{{ article.title }}</h6>
-    <p>{{ article.description }}</p>
-    <img [src]="'http://localhost:3000/'+article.image" alt="Article Image" />
-  }
-</div>
-<mat-paginator></mat-paginator>

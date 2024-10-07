@@ -1,0 +1,23 @@
+app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  align-items: center;
+
+  .header-container {
+    height: 100px;
+    position: fixed;
+    z-index: 3;
+    border-radius: 15px;
+  }
+
+  .content-container {
+    display: flex;
+    flex-grow: 1;
+    margin-top: 95px;
+
+    router-outlet {
+      flex-grow: 1;
+    }
+  }
+}

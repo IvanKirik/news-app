@@ -1,3 +1,58 @@
-:host {
-  display: block;
+@import "../../../../../styles/constants";
+@import "../../../../../styles/mixins";
+
+.article-list-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 40px 54px 70px 40px;
+
+  .articles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 20px;
+
+    @include respond-to(laptop) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include respond-to(tablet) {
+      grid-template-columns: repeat(1, 1fr);
+    }
+  }
+
+  .article-item {
+    @include flex(column, stretch, space-between);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+
+    &__title {
+      margin-bottom: 20px;
+      font-size: $medium;
+      font-weight: $medium;
+    }
+
+    &__image {
+      @include size(100%, 300px);
+      align-self: center;
+      margin-bottom: 16px;
+
+
+    }
+
+    &__description {
+      color: $dark-grey;
+      padding: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      /* Limit to 3 lines */
+      -webkit-box-orient: vertical;
+      transition: -webkit-line-clamp 0.3s
+    }
+  }
 }

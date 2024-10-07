@@ -1,6 +1,7 @@
 export const articlesInitialState: ArticlesState = {
   articles: [
     {
+      id: 0,
       title: '',
       description: '',
       image: '',
@@ -10,20 +11,23 @@ export const articlesInitialState: ArticlesState = {
   loading: false,
   config: {
     search: '',
-    page: null,
-    limit: null,
+    page: 1,
+    limit: 3,
     sortField: null,
     sortOrder: null,
   },
+  total: 0,
 };
 
 export interface ArticlesState {
   articles: Articles[];
   loading: boolean;
   config: Nullable<ArticlesListConfig>;
+  total: number;
 }
 
 export interface Articles {
+  id: number;
   title: string;
   description: string;
   image: string;

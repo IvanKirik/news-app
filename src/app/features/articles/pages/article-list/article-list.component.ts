@@ -1,10 +1,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  effect,
   inject,
   input,
   OnInit,
+  Signal,
 } from '@angular/core';
 import { ArticlesStore } from '../../../../core/ngxs/articles.store';
 import { JsonPipe, NgForOf, NgOptimizedImage } from '@angular/common';
@@ -14,7 +14,15 @@ import { MatInput } from '@angular/material/input';
 import { DeepSignal } from '@ngrx/signals';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
-import { combineLatest, map } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, startWith, tap } from 'rxjs';
+import {
+  MatCard,
+  MatCardContent,
+  MatCardImage,
+  MatCardTitle,
+} from '@angular/material/card';
+import { RouterLink } from '@angular/router';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 
 @Component({
   selector: 'app-article-list',
@@ -28,6 +36,12 @@ import { combineLatest, map } from 'rxjs';
     FormsModule,
     ReactiveFormsModule,
     MatPaginator,
+    MatCard,
+    MatCardTitle,
+    MatCardContent,
+    RouterLink,
+    MatCardImage,
+    PaginatorModule,
   ],
   templateUrl: './article-list.component.html',
   styleUrl: './article-list.component.scss',
@@ -36,25 +50,39 @@ import { combineLatest, map } from 'rxjs';
 export class ArticleListComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   protected articlesStore = inject(ArticlesStore);
-  public $articles: DeepSignal<Articles[]> = this.articlesStore.articles;
-  public search = input<string>('');
-  public searchControl = this.fb.control('');
 
+  public $articles: DeepSignal<Articles[]> = this.articlesStore.articles;
+  public $totalArticles: Signal<number> = this.articlesStore.total;
   public searchSignal = this.articlesStore.config;
 
-  constructor() {
-    effect(() => {
-      console.log(this.searchSignal());
-    });
-  }
+  public search = input<string>('');
+  public page$ = new BehaviorSubject<number>(1);
+  public limit$ = new BehaviorSubject<number>(3);
+  public searchControl = this.fb.control('');
+
+  constructor() {}
 
   public ngOnInit() {
-    this.articlesStore.loadAll({});
-    combineLatest([this.searchControl.valueChanges])
-      .pipe(map(([search]) => ({ search })))
+    combineLatest([
+      this.searchControl.valueChanges.pipe(
+        startWith(''),
+        tap(() => {
+          this.page$.next(1);
+          this.limit$.next(3);
+        }),
+      ),
+      this.page$,
+      this.limit$,
+    ])
+      .pipe(map(([search, page, limit]) => ({ search, page, limit })))
       .subscribe((obj) => {
         this.articlesStore.updateFilters(obj);
         this.articlesStore.loadAll(obj);
       });
+  }
+
+  onPageChange(event: PaginatorState) {
+    this.page$.next(event.page ? event.page + 1 : 1);
+    this.limit$.next(event.rows ? event.rows : 3);
   }
 }

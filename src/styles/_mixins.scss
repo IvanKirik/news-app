@@ -1,0 +1,35 @@
+@import "constants";
+
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == laptop {
+    @media (max-width: $WIDTH_BREAKPOINT_LAPTOP) {
+      @content;
+    }
+  } @else if $breakpoint == tablet {
+    @media (max-width: $WIDTH_BREAKPOINT_TABLET) {
+      @content;
+    }
+  } @else if $breakpoint == mobile {
+    @media (max-width: $WIDTH_BREAKPOINT_MOBILE) {
+      @content;
+    }
+  }
+}
+
+@mixin shadow {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15)
+}
+
+@mixin flex($direction, $align-items, $justify-content) {
+  display: flex;
+  flex-direction: $direction;
+  align-items: $align-items;
+  justify-content: $justify-content;
+}
+
+@mixin size ($width, $height) {
+  width: $width;
+  height: $height;
+}
+
+

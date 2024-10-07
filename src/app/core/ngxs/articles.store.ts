@@ -28,6 +28,7 @@ export const ArticlesStore = signalStore(
                 patchState(store, {
                   articles: response.data,
                   loading: false,
+                  total: response.total,
                 });
               },
               error: () => {
