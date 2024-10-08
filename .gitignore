@@ -1,8 +1,33 @@
-# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+# Angular built files
+/.angular/cache
+.angular-cli.json
+/.angular/*
+
+# PrimeNG resources
+/resources/themes/
+
+# SCSS
+/.sass-cache
+
+# Package managers
+package-lock.json
+
+# TypeScript
+*.tsbuildinfo
+# Coverage reports
+/coverage
+# Environment variables
+.env
+# Logs
+*.log
+ npm-debug.log*
+
+# Temporary files and folders
+/tmp
+/.temp
 
 # Compiled output
 /dist
-/tmp
 /out-tsc
 /bazel-out
 
@@ -29,10 +54,7 @@ yarn-error.log
 .history/*
 
 # Miscellaneous
-/.angular/cache
-.sass-cache/
 /connect.lock
-/coverage
 /libpeerconnection.log
 testem.log
 /typings
