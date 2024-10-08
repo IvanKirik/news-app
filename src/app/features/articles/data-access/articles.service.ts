@@ -3,7 +3,6 @@ import { Observable } from 'rxjs';
 import {
   Articles,
   ArticlesListConfig,
-  Nullable,
   PaginatedArticlesResponse,
 } from './articles.model';
 import { ApiService } from '../../../core/services/api/api.service';
@@ -16,7 +15,7 @@ export class ArticlesService {
   private readonly apiService = inject(ApiService);
 
   getAllArticles(
-    config: Nullable<ArticlesListConfig>,
+    config: ArticlesListConfig,
   ): Observable<PaginatedArticlesResponse<Articles>> {
     const params = this.prepareParams(config);
     return this.apiService.get<PaginatedArticlesResponse<Articles>>(
@@ -25,7 +24,7 @@ export class ArticlesService {
     );
   }
 
-  private prepareParams(config: Nullable<ArticlesListConfig>): HttpParams {
+  private prepareParams(config: ArticlesListConfig): HttpParams {
     let params: HttpParams = new HttpParams();
     if (config.search) {
       params = params.set('search', config.search);

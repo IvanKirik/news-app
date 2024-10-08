@@ -3,14 +3,12 @@ import {
   articlesInitialState,
   ArticlesListConfig,
   ArticlesState,
-  Nullable,
 } from './articles.model';
 import { ArticlesService } from './articles.service';
 import { inject } from '@angular/core';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
-import { state } from '@angular/animations';
 import {
   DEFAULT_PAGE,
   DEFAULT_PAGE_SIZE,
@@ -20,7 +18,7 @@ export const ArticlesStore = signalStore(
   { providedIn: 'root' },
   withState<ArticlesState>(articlesInitialState),
   withMethods((store, articlesService = inject(ArticlesService)) => ({
-    updateFilters(filter: Nullable<ArticlesListConfig>): void {
+    updateFilters(filter: ArticlesListConfig): void {
       patchState(store, (state) => ({
         config: {
           ...state.config,
@@ -42,7 +40,7 @@ export const ArticlesStore = signalStore(
       this.loadAll(store.config);
     },
 
-    loadAll: rxMethod<Nullable<ArticlesListConfig>>(
+    loadAll: rxMethod<ArticlesListConfig>(
       pipe(
         tap(() => patchState(store, { loading: true })),
         switchMap((filter) =>

@@ -13,8 +13,6 @@ export const articlesInitialState: ArticlesState = {
     search: '',
     page: 1,
     limit: 3,
-    sortField: null,
-    sortOrder: null,
   },
   total: 0,
 };
@@ -22,7 +20,7 @@ export const articlesInitialState: ArticlesState = {
 export interface ArticlesState {
   articles: Articles[];
   loading: boolean;
-  config: Nullable<ArticlesListConfig>;
+  config: ArticlesListConfig;
   total: number;
 }
 
@@ -43,11 +41,11 @@ export interface PaginatedArticlesResponse<T> {
 }
 
 export interface ArticlesListConfig {
-  search: string;
+  search?: string;
   page: number;
   limit: number;
-  sortField: string;
-  sortOrder: string;
+  sortField?: string;
+  sortOrder?: string;
 }
 
 export type Nullable<T> = {

@@ -1,8 +1,4 @@
 <div class="article-list-container">
-
-  <mat-form-field>
-    <input matInput type="text" [formControl]="searchControl">
-  </mat-form-field>
   <div class="articles">
     @for (article of $articles(); track article) {
       <mat-card class="article-item" routerLink="{{article.id}}">
@@ -11,17 +7,15 @@
         <mat-card-title class="article-item__title">{{ article.title }}</mat-card-title>
         <mat-card-content class="article-item__description">{{ article.description }}
         </mat-card-content>
-
       </mat-card>
     }
   </div>
   <div>
 
-
     <p-paginator
       (onPageChange)="onPageChange($event)"
+      [first]="first()"
       [rows]="$configSignal().limit"
-      [first]="$configSignal().page!"
       [totalRecords]="$totalArticles()"
       [rowsPerPageOptions]="[3, 6, 9]" />
   </div>
