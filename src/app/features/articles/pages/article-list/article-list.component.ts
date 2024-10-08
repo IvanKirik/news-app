@@ -1,10 +1,11 @@
 import {
   ChangeDetectionStrategy,
-  Component,
+  Component, computed,
+  effect,
   inject,
   input,
   OnInit,
-  Signal,
+  Signal
 } from '@angular/core';
 import { ArticlesStore } from '../../data-access/articles.store';
 import { JsonPipe, NgForOf, NgOptimizedImage } from '@angular/common';
@@ -23,6 +24,10 @@ import {
 } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import {
+  DEFAULT_PAGE,
+  DEFAULT_PAGE_SIZE,
+} from '../../../../shared/constants/pagination.constatns';
 
 @Component({
   selector: 'app-article-list',
@@ -53,35 +58,28 @@ export class ArticleListComponent implements OnInit {
 
   public $articles: DeepSignal<Articles[]> = this.articlesStore.articles;
   public $totalArticles: Signal<number> = this.articlesStore.total;
-  public searchSignal = this.articlesStore.config;
+  public $configSignal = this.articlesStore.config;
 
   public search = input<string>('');
-  public page$ = new BehaviorSubject<number>(1);
-  public limit$ = new BehaviorSubject<number>(3);
+  public page$ = new BehaviorSubject<number>(DEFAULT_PAGE);
+  public limit$ = new BehaviorSubject<number>(DEFAULT_PAGE_SIZE);
   public searchControl = this.fb.control('');
 
-  constructor() {}
 
   public ngOnInit() {
-    combineLatest([
-      this.searchControl.valueChanges.pipe(
-        startWith(''),
-        tap(() => {
-          this.page$.next(1);
-          this.limit$.next(3);
-        }),
-      ),
-      this.page$,
-      this.limit$,
-    ])
-      .pipe(map(([search, page, limit]) => ({ search, page, limit })))
-      .subscribe((obj) => {
-        this.articlesStore.updateFilters(obj);
-        this.articlesStore.loadAll(obj);
-      });
+    this.articlesStore.loadAll(this.articlesStore.config)
+    // combineLatest([this.page$, this.limit$])
+    //   .pipe(map(([page, limit]) => ({ page, limit })))
+    //   .subscribe((obj) => {
+    //     this.articlesStore.updateFilters(obj);
+    //     this.articlesStore.loadAll(obj);
+    //   });
   }
 
   onPageChange(event: PaginatorState) {
+    console.log(event.page);
+    this.articlesStore.updateFilters({page: event.page ? event.page + 1 : 1, limit: event.rows});
+
     this.page$.next(event.page ? event.page + 1 : 1);
     this.limit$.next(event.rows ? event.rows : 3);
   }

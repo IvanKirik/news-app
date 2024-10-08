@@ -3,9 +3,6 @@
   <mat-form-field>
     <input matInput type="text" [formControl]="searchControl">
   </mat-form-field>
-  <div>
-    {{ searchSignal().search }}
-  </div>
   <div class="articles">
     @for (article of $articles(); track article) {
       <mat-card class="article-item" routerLink="{{article.id}}">
@@ -23,8 +20,9 @@
 
     <p-paginator
       (onPageChange)="onPageChange($event)"
-      [rows]="3"
+      [rows]="$configSignal().limit"
+      [first]="$configSignal().page!"
       [totalRecords]="$totalArticles()"
-      [rowsPerPageOptions]="[3, 6, 9]"/>
+      [rowsPerPageOptions]="[3, 6, 9]" />
   </div>
 </div>
