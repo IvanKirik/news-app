@@ -5,7 +5,7 @@ import {
   ArticlesState,
   Nullable,
 } from './articles.model';
-import { ArticlesService } from '../services/articles/articles.service';
+import { ArticlesService } from './articles.service';
 import { inject } from '@angular/core';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';

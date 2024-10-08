@@ -6,9 +6,9 @@ import {
   OnInit,
   Signal,
 } from '@angular/core';
-import { ArticlesStore } from '../../../../core/ngxs/articles.store';
+import { ArticlesStore } from '../../data-access/articles.store';
 import { JsonPipe, NgForOf, NgOptimizedImage } from '@angular/common';
-import { Articles } from '../../../../core/ngxs/articles.model';
+import { Articles } from '../../data-access/articles.model';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { DeepSignal } from '@ngrx/signals';

@@ -1,34 +1,48 @@
-import {inject, Injectable} from '@angular/core';
-import {DbService} from "../../../core/indexed-db";
-import {from, Observable} from "rxjs";
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import {
+  Articles,
+  ArticlesListConfig,
+  Nullable,
+  PaginatedArticlesResponse,
+} from './articles.model';
+import { ApiService } from '../../../core/services/api/api.service';
+import { HttpParams } from '@angular/common/http';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class                                                                                                                                                                                                                                                                                                                                              ArticlesService {
-  private readonly dbService = inject(DbService);
+export class ArticlesService {
+  private readonly apiService = inject(ApiService);
 
-  public getNews(): Observable<any[]> {
-    return from(this.dbService.news.getAll());
+  getAllArticles(
+    config: Nullable<ArticlesListConfig>,
+  ): Observable<PaginatedArticlesResponse<Articles>> {
+    const params = this.prepareParams(config);
+    return this.apiService.get<PaginatedArticlesResponse<Articles>>(
+      'articles',
+      params,
+    );
   }
 
-  public getNewsById(id: number): Observable<any> {
-    return from(this.dbService.news.getById(id));
-  }
+  private prepareParams(config: Nullable<ArticlesListConfig>): HttpParams {
+    let params: HttpParams = new HttpParams();
+    if (config.search) {
+      params = params.set('search', config.search);
+    }
+    if (config.page) {
+      params = params.set('page', config.page.toString());
+    }
+    if (config.limit) {
+      params = params.set('limit', config.limit.toString());
+    }
+    if (config.sortField) {
+      params = params.set('sortField', config.sortField);
+    }
+    if (config.sortOrder) {
+      params = params.set('sortOrder', config.sortOrder);
+    }
 
-  public create(dto: any): Observable<void> {
-    return from(this.dbService.news.addAsync(dto));
-  }
-
-  public editNews(id: number, dto: any): Observable<void> {
-    return from(this.dbService.news.updateAsync(id, dto));
-  }
-
-  public removeById(id: number): Observable<void> {
-    return from(this.dbService.news.removeAsync(id));
-  }
-
-  public removeItems(ids: number[]): Observable<void> {
-    return from(this.dbService.news.removeRangeAsync(ids));
+    return params;
   }
 }
