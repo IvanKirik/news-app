@@ -13,30 +13,36 @@
              placeholder="Search" />
     </p-iconField>
     <div class="sort">
-      <p-button
-        (click)="sort('title', 'ASC')"
-        icon="pi pi-sort-alpha-down"
-        [rounded]="true"
-        [text]="true"
-        [autofocus]="filters().sortField === 'title' && filters().sortOrder === 'ASC'" />
-      <p-button
-        (click)="sort('title', 'DESC')"
-        icon="pi pi-sort-alpha-down-alt"
-        [rounded]="true"
-        [text]="true"
-        [autofocus]="filters().sortField === 'title' && filters().sortOrder === 'DESC'"/>
-      <p-button
-        (click)="sort('createdAt', 'ASC')"
-        icon="pi pi-sort-amount-down"
-        [rounded]="true"
-        [text]="true"
-        [autofocus]="filters().sortField === 'createdAt' && filters().sortOrder === 'ASC'"/>
-      <p-button
-        (click)="sort('createdAt', 'DESC')"
-        icon="pi pi-sort-amount-down-alt"
-        [rounded]="true"
-        [text]="true"
-        [autofocus]="filters().sortField === 'createdAt' && filters().sortOrder === 'ASC'"/>
+      @if (filters().sortField === 'title' && filters().sortOrder === 'DESC') {
+        <p-button
+          (click)="sort('title', 'ASC')"
+          icon="pi pi-sort-alpha-down"
+          [rounded]="true"
+          [text]="true"
+          [autofocus]="filters().sortField === 'title' && filters().sortOrder === 'ASC'" />
+      } @else {
+        <p-button
+          (click)="sort('title', 'DESC')"
+          icon="pi pi-sort-alpha-down-alt"
+          [rounded]="true"
+          [text]="true"
+          [autofocus]="filters().sortField === 'title' && filters().sortOrder === 'DESC'"/>
+      }
+      @if (filters().sortField === 'createdAt' && filters().sortOrder === 'DESC') {
+        <p-button
+          (click)="sort('createdAt', 'ASC')"
+          icon="pi pi-sort-amount-down"
+          [rounded]="true"
+          [text]="true"
+          [autofocus]="filters().sortField === 'createdAt' && filters().sortOrder === 'ASC'"/>
+      } @else {
+        <p-button
+          (click)="sort('createdAt', 'DESC')"
+          icon="pi pi-sort-amount-down-alt"
+          [rounded]="true"
+          [text]="true"
+          [autofocus]="filters().sortField === 'createdAt' && filters().sortOrder === 'ASC'"/>
+      }
     </div>
   </div>
 </div>

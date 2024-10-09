@@ -7,7 +7,7 @@ import {
 import { ArticlesService } from './articles.service';
 import { inject } from '@angular/core';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { Observable, pipe, switchMap, tap } from 'rxjs';
+import { pipe, switchMap, tap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
 import { setError, setFulfilled, setPending, withRequestStatus } from '../../../core/signal-store-features';
 import { HttpErrorResponse } from '@angular/common/http';
