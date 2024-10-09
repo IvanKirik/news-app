@@ -1,27 +1,33 @@
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import {
-  Articles,
   ArticlesListConfig,
   PaginatedArticlesResponse,
 } from './articles.model';
 import { ApiService } from '../../../core/services/api/api.service';
 import { HttpParams } from '@angular/common/http';
+import { ArticleDto } from './dto/article.dto';
+import { ArticleEntity } from './entities/article.entity';
+import { ArticleMapper } from './mappers/article.mapper';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ArticlesService {
   private readonly apiService = inject(ApiService);
+  private readonly articleMapper = inject(ArticleMapper);
 
   getAllArticles(
     config: ArticlesListConfig,
-  ): Observable<PaginatedArticlesResponse<Articles>> {
+  ): Observable<PaginatedArticlesResponse<ArticleEntity>> {
     const params = this.prepareParams(config);
-    return this.apiService.get<PaginatedArticlesResponse<Articles>>(
+    return this.apiService.get<PaginatedArticlesResponse<ArticleDto>>(
       'articles',
       params,
-    );
+    ).pipe(map((response) => ({
+      ...response,
+      data: response.data.map((item) => this.articleMapper.fromDto(item)),
+    })))
   }
 
   private prepareParams(config: ArticlesListConfig): HttpParams {

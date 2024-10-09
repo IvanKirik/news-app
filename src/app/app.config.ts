@@ -4,8 +4,8 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { environment } from '../environments';
-import { API_URL } from './core/services/api-url.token';
 import { provideHttpClient } from '@angular/common/http';
+import { Environment } from './core/intefaces/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -13,6 +13,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()),
     provideAnimationsAsync(),
     provideHttpClient(),
-    { provide: API_URL, useValue: environment.API_DOMAIN },
+    { provide: Environment, useValue: environment },
   ],
 };

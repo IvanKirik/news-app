@@ -1,6 +1,7 @@
 @import "styles/constants";
 @import "primeng/resources/themes/lara-light-blue/theme.css";
 @import "primeng/resources/primeng.css";
+@import "primeicons/primeicons.css";
 
 html, body {
   height: 100%;
@@ -12,4 +13,25 @@ body {
   font-family: $font-family;
   font-weight: $default;
   overflow-x: hidden ;
+}
+
+.container {
+  max-width: $WIDTH_BREAKPOINT_LAPTOP;
+  margin: 0 auto;
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: white;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #EEEEEE;
 }

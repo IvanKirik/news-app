@@ -7,54 +7,61 @@ import {
 import { ArticlesService } from './articles.service';
 import { inject } from '@angular/core';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap, tap } from 'rxjs';
+import { Observable, pipe, switchMap, tap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
-import {
-  DEFAULT_PAGE,
-  DEFAULT_PAGE_SIZE,
-} from '../../../shared/constants/pagination.constatns';
+import { setError, setFulfilled, setPending, withRequestStatus } from '../../../core/signal-store-features';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Sort } from '../../../core/intefaces/sort.type';
 
 export const ArticlesStore = signalStore(
   { providedIn: 'root' },
   withState<ArticlesState>(articlesInitialState),
+  withRequestStatus(),
   withMethods((store, articlesService = inject(ArticlesService)) => ({
-    updateFilters(filter: ArticlesListConfig): void {
+    updateFilters(config: ArticlesListConfig): void {
       patchState(store, (state) => ({
+        ...state,
         config: {
           ...state.config,
-          page: filter.page,
-          limit: filter.limit,
-        },
+          ...config
+        }
       }));
     },
-
-    updateSearch(search: string): void {
+    search(search: string): void {
       patchState(store, (state) => ({
+        ...state,
         config: {
           ...state.config,
-          search,
-          page: DEFAULT_PAGE,
-          limit: DEFAULT_PAGE_SIZE,
-        },
+          search
+        }
       }));
-      this.loadAll(store.config);
     },
-
+    sort(sortField: string, sortOrder: Sort): void {
+      patchState(store, (state) => ({
+        ...state,
+        config: {
+          ...state.config,
+          sortField,
+          sortOrder
+        }
+      }));
+    },
     loadAll: rxMethod<ArticlesListConfig>(
       pipe(
-        tap(() => patchState(store, { loading: true })),
+        tap(() => patchState(store, setPending())),
         switchMap((filter) =>
           articlesService.getAllArticles(filter).pipe(
             tapResponse({
               next: (response) => {
-                patchState(store, {
-                  articles: response.data,
-                  loading: false,
-                  total: response.total,
-                });
+                patchState(store, (state) => ({
+                    ...state,
+                    articles: response.data,
+                    loading: false,
+                    total: response.total,
+                }), setFulfilled());
               },
-              error: () => {
-                patchState(store, { loading: false });
+              error: ({ message }: HttpErrorResponse) => {
+                patchState(store, setError(message));
               },
             }),
           ),

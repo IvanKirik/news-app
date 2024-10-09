@@ -1,22 +1,76 @@
+<div class="articles-head">
+  <div class="actions">
+    <p-button
+      (click)="create()"
+      label="Добавить дайджест" [rounded]="true" />
+  </div>
+  <div class="nav">
+    <p-iconField iconPosition="left">
+      <p-inputIcon styleClass="pi pi-search" />
+      <input type="text"
+             [formControl]="searchControl"
+             pInputText
+             placeholder="Search" />
+    </p-iconField>
+    <div class="sort">
+      <p-button
+        (click)="sort('title', 'ASC')"
+        icon="pi pi-sort-alpha-down"
+        [rounded]="true"
+        [text]="true"
+        [autofocus]="filters().sortField === 'title' && filters().sortOrder === 'ASC'" />
+      <p-button
+        (click)="sort('title', 'DESC')"
+        icon="pi pi-sort-alpha-down-alt"
+        [rounded]="true"
+        [text]="true"
+        [autofocus]="filters().sortField === 'title' && filters().sortOrder === 'DESC'"/>
+      <p-button
+        (click)="sort('createdAt', 'ASC')"
+        icon="pi pi-sort-amount-down"
+        [rounded]="true"
+        [text]="true"
+        [autofocus]="filters().sortField === 'createdAt' && filters().sortOrder === 'ASC'"/>
+      <p-button
+        (click)="sort('createdAt', 'DESC')"
+        icon="pi pi-sort-amount-down-alt"
+        [rounded]="true"
+        [text]="true"
+        [autofocus]="filters().sortField === 'createdAt' && filters().sortOrder === 'ASC'"/>
+    </div>
+  </div>
+</div>
 <div class="article-list-container">
   <div class="articles">
-    @for (article of $articles(); track article) {
-      <mat-card class="article-item" routerLink="{{article.id}}">
-        <img class="article-item__image" mat-card-image [src]="'http://localhost:3000/'+article.image"
-             alt="Article Image" />
-        <mat-card-title class="article-item__title">{{ article.title }}</mat-card-title>
-        <mat-card-content class="article-item__description">{{ article.description }}
+    @for (article of articles(); track article.id) {
+      <mat-card appearance="outlined">
+        <mat-card-header [style.margin-bottom.px]="15">
+          @if (article.nameIsAuthor) {
+            <mat-card-title>Sheba Inu</mat-card-title>
+          } @else {
+            <mat-card-title>Sheba Inu</mat-card-title>
+          }
+          @if (article.emailIsAuthor) {
+            <mat-card-subtitle>Dog Breed</mat-card-subtitle>
+          } @else {
+            <mat-card-subtitle>Dog Breed</mat-card-subtitle>
+          }
+        </mat-card-header>
+        <img mat-card-image [src]="article.image | url" [alt]="article.image"/>
+        <mat-card-content>
+          <h6 class="article-item__title" truncateText>
+            {{ article.title }}
+          </h6>
+          <p>
+            {{ article.tags | tag }}
+          </p>
         </mat-card-content>
       </mat-card>
     }
   </div>
-  <div>
-
-    <p-paginator
-      (onPageChange)="onPageChange($event)"
-      [first]="first()"
-      [rows]="$configSignal().limit"
-      [totalRecords]="$totalArticles()"
-      [rowsPerPageOptions]="[3, 6, 9]" />
-  </div>
+  <p-paginator
+    (onPageChange)="pageChange($event)"
+    [rows]="filters().limit"
+    [totalRecords]="total()"
+    [rowsPerPageOptions]="[4, 8, 10]" />
 </div>

@@ -25,8 +25,6 @@ export class HeaderComponent implements OnInit {
   });
 
   ngOnInit() {
-    this.searchControl.valueChanges.subscribe((search) => {
-      this.articlesStore.updateSearch(search);
-    });
+
   }
 }

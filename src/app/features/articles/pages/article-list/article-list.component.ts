@@ -1,29 +1,43 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
+  DestroyRef, effect,
   inject,
-  input,
   OnInit,
-  Signal,
+  Signal, untracked
 } from '@angular/core';
 import { ArticlesStore } from '../../data-access/articles.store';
 import { JsonPipe, NgForOf, NgOptimizedImage } from '@angular/common';
-import { Articles } from '../../data-access/articles.model';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { DeepSignal } from '@ngrx/signals';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import {
   MatCard,
-  MatCardContent,
-  MatCardImage,
-  MatCardTitle,
+  MatCardContent, MatCardHeader,
+  MatCardImage, MatCardSubtitle,
+  MatCardTitle
 } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { DEFAULT_PAGE_SIZE } from '../../../../shared/constants/pagination.constatns';
+import { CardModule } from 'primeng/card';
+import { Button } from 'primeng/button';
+import { ArticleEntity } from '../../data-access/entities/article.entity';
+import { TruncateTextDirective } from '../../../../core/directives/truncate-text.directive';
+import { InputIconModule } from 'primeng/inputicon';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputTextModule } from 'primeng/inputtext';
+import { TagPipe } from '../../pipes/tag.pipe';
+import { UrlPipe } from '../../../../core/pipes/url.pipe';
+import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs';
+import { ArticlesListConfig } from '../../data-access/articles.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RequestStatus } from '../../../../core/signal-store-features';
+import { LoaderService } from '../../../../core/services/loader.service';
+import { Sort } from '../../../../core/intefaces/sort.type';
+import { ImageUploaderComponent } from '../../../../shared/components/image-uploader/image-uploader.component';
+import { DialogService } from 'primeng/dynamicdialog';
+import { CreateArticleModalComponent } from '../../components/create-article-modal/create-article-modal.component';
 
 @Component({
   selector: 'app-article-list',
@@ -43,32 +57,79 @@ import { DEFAULT_PAGE_SIZE } from '../../../../shared/constants/pagination.const
     RouterLink,
     MatCardImage,
     PaginatorModule,
+    CardModule,
+    Button,
+    TruncateTextDirective,
+    MatCardHeader,
+    MatCardSubtitle,
+    InputIconModule,
+    IconFieldModule,
+    InputTextModule,
+    TagPipe,
+    UrlPipe,
+    ImageUploaderComponent,
   ],
   templateUrl: './article-list.component.html',
   styleUrl: './article-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [DialogService]
 })
 export class ArticleListComponent implements OnInit {
-  protected articlesStore = inject(ArticlesStore);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly articlesStore = inject(ArticlesStore);
+  private readonly loaderService = inject(LoaderService);
+  private readonly dialogService = inject(DialogService);
 
-  public $articles: DeepSignal<Articles[]> = this.articlesStore.articles;
-  public $totalArticles: Signal<number> = this.articlesStore.total;
-  public $configSignal = this.articlesStore.config;
+  public readonly articles: Signal<ArticleEntity[]> =
+    this.articlesStore.articles;
+  public readonly filters: Signal<ArticlesListConfig> =
+    this.articlesStore.config;
+  public readonly total: Signal<number> = this.articlesStore.total;
+  public readonly requestStatus: Signal<RequestStatus> =
+    this.articlesStore.requestStatus;
 
-  public search = input<string>('');
+  public readonly searchControl = new FormControl('');
 
-  public first = computed((): number => {
-    return (this.$configSignal().page - 1) * this.$configSignal().limit;
-  });
+  constructor() {
+    effect(() => {
+      const requestStatus = this.requestStatus();
+      untracked(() => {
+        requestStatus === 'pending'
+          ? this.loaderService.show()
+          : this.loaderService.hide();
+      });
+    });
+  }
 
   public ngOnInit() {
     this.articlesStore.loadAll(this.articlesStore.config);
+
+    this.searchControl.valueChanges
+      .pipe(
+        distinctUntilChanged(),
+        debounceTime(500),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((search) => {
+        this.articlesStore.search(search ?? '');
+      });
   }
 
-  onPageChange(event: PaginatorState) {
+  public sort(sortField: string, sortOrder: Sort): void {
+    this.articlesStore.sort(sortField, sortOrder);
+  }
+
+  public pageChange(event: PaginatorState) {
     this.articlesStore.updateFilters({
       page: event.page ? event.page + 1 : 0,
-      limit: event.rows ? event.rows : DEFAULT_PAGE_SIZE,
+      limit: event.rows ? event.rows : this.filters().limit,
     });
+  }
+
+  public create(): void {
+    const ref = this.dialogService.open(CreateArticleModalComponent, {
+      header: 'Добавить дайджест',
+      width: '500px'
+    })
   }
 }

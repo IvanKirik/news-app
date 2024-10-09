@@ -1,17 +1,60 @@
 @import "../../../../../styles/constants";
 @import "../../../../../styles/mixins";
 
+.articles-head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  position: sticky;
+  top: 10px;
+  background-color: white;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .nav {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    p-iconfield {
+      width: 100%;
+    }
+    input {
+      width: 100%;
+    }
+    .sort {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  }
+}
+
 .article-list-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 40px 54px 70px 40px;
+  box-sizing: border-box;
+  padding-right: 5px;
+  justify-content: space-between;
+  height: calc(100% - 162px);
+
 
   .articles {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
+    max-height: calc(100% - 84px);
+    overflow-y: auto;
+    padding: 0 10px;
 
     @include respond-to(laptop) {
       grid-template-columns: repeat(2, 1fr);
@@ -24,14 +67,17 @@
 
   .article-item {
     @include flex(column, stretch, space-between);
-    padding: 20px;
     position: relative;
     overflow: hidden;
     cursor: pointer;
 
     &__title {
+      box-sizing: border-box;
+      min-height: 70px;
       margin-bottom: 20px;
-      font-size: $medium;
+      margin-top: 20px;
+      font-size: 18px;
+      line-height: 1.3;
       font-weight: $medium;
     }
 
@@ -39,8 +85,6 @@
       @include size(100%, 300px);
       align-self: center;
       margin-bottom: 16px;
-
-
     }
 
     &__description {

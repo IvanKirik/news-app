@@ -1,0 +1,24 @@
+<button (click)="fileInput.click()">
+  <div class="placeholder"
+  *ngIf="!(previewImage$ | async)"
+  >
+      <div
+        class="drag-hint"
+        [hidden]="(onDrag || onWrongDrag)"
+      >Перетащите файл для загрузки</div>
+  <div class="drag-hint on-drag"
+       [hidden]="!onDrag"
+  >Отпустите файл здесь</div>
+  </div>
+  <img
+    *ngIf="previewImage$ | async as image"
+    [src]="image.url | url" [alt]="image.name">
+</button>
+
+<input
+  [multiple]="multiple()"
+  (change)="onUpload($event.target)"
+  (click)="clearValue(fileInput)"
+  type="file"
+  hidden
+  #fileInput />

@@ -1,35 +1,24 @@
+import { ArticleEntity } from './entities/article.entity';
+import { Sort } from '../../../core/intefaces/sort.type';
+
 export const articlesInitialState: ArticlesState = {
-  articles: [
-    {
-      id: 0,
-      title: '',
-      description: '',
-      image: '',
-      email: '',
-    },
-  ],
+  articles: [],
   loading: false,
   config: {
     search: '',
     page: 1,
-    limit: 3,
+    limit: 8,
+    sortField: 'createdAt',
+    sortOrder: 'ASC',
   },
   total: 0,
 };
 
 export interface ArticlesState {
-  articles: Articles[];
+  articles: ArticleEntity[];
   loading: boolean;
   config: ArticlesListConfig;
   total: number;
-}
-
-export interface Articles {
-  id: number;
-  title: string;
-  description: string;
-  image: string;
-  email: string;
 }
 
 export interface PaginatedArticlesResponse<T> {
@@ -45,7 +34,7 @@ export interface ArticlesListConfig {
   page: number;
   limit: number;
   sortField?: string;
-  sortOrder?: string;
+  sortOrder?: Sort;
 }
 
 export type Nullable<T> = {

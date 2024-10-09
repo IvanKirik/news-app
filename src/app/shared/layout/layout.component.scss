@@ -1,0 +1,16 @@
+:host {
+  display: block;
+}
+
+.layout-body {
+  height: calc(100vh - 80px);
+  overflow-y: auto;
+  padding-bottom: 20px;
+  box-sizing: border-box;
+}
+
+.loader {
+  position: absolute;
+  width: 100%;
+  top: 80px;
+}
