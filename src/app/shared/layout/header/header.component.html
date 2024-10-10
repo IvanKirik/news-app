@@ -1,5 +1,14 @@
 <header>
   <button routerLink="">Домой</button>
+  <a mat-stroked-button [routerLink]="'/auth/login'" aria-label="Login">
+    Войти
+    <mat-icon>person</mat-icon>
+  </a>
+  <div appShowIfNotAuthenticated><a mat-stroked-button [routerLink]="'/auth/register'" aria-label="Login">
+    Зарегестрироваться
+    <mat-icon>person</mat-icon>
+  </a></div>
+
   <mat-form-field>
     <input matInput type="text" [formControl]="searchControl">
   </mat-form-field>
