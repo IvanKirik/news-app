@@ -9,9 +9,6 @@
 # SCSS
 /.sass-cache
 
-# Package managers
-package-lock.json
-
 # TypeScript
 *.tsbuildinfo
 # Coverage reports

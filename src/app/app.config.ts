@@ -11,6 +11,8 @@ import { environment } from '../environments';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { Environment } from './core/intefaces/environment';
 import { DialogService } from 'primeng/dynamicdialog';
+import { appInitializerFactory } from './core/factory/initializer-factory';
+import { tokenInterceptor } from './features/auth/data-access/token-interceptor.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,6 +27,5 @@ export const appConfig: ApplicationConfig = {
       provide: APP_INITIALIZER,
       useFactory: appInitializerFactory,
     },
-
   ],
 };

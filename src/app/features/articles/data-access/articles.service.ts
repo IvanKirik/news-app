@@ -4,7 +4,6 @@ import {
   ArticlesListConfig,
   PaginatedArticlesResponse,
 } from './articles.model';
-import { ApiService } from '../../../core/services/api/api.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ArticleDto, EmailsToSend, Tag } from './dto/article.dto';
 import { ArticleEntity } from './entities/article.entity';
@@ -16,46 +15,44 @@ import { Environment } from '../../../core/intefaces/environment';
   providedIn: 'root',
 })
 export class ArticlesService {
-  private readonly apiService = inject(ApiService);
   private readonly articleMapper = inject(ArticleMapper);
   private readonly http = inject(HttpClient);
-  private readonly environments = inject(Environment);
+  private readonly env = inject(Environment);
 
   public getAllArticles(
     config: ArticlesListConfig,
   ): Observable<PaginatedArticlesResponse<ArticleEntity>> {
     const params = this.prepareParams(config);
-    return this.apiService.get<PaginatedArticlesResponse<ArticleDto>>(
-      'articles',
-      params,
-    ).pipe(map((response) => ({
-      ...response,
-      data: response.data.map((item) => this.articleMapper.fromDto(item)),
-    })))
+    return this.http
+      .get<
+        PaginatedArticlesResponse<ArticleDto>
+      >(`${this.env.apiUrl}articles`, { params })
+      .pipe(
+        map((response) => ({
+          ...response,
+          data: response.data.map((item) => this.articleMapper.fromDto(item)),
+        })),
+      );
   }
 
   public getTags(): Observable<Tag[]> {
-    return this.apiService.get('tags');
+    return this.http.get<Tag[]>(`${this.env.apiUrl}tags`);
   }
 
   public getEmails(): Observable<EmailsToSend[]> {
-    return this.apiService.get('emails');
+    return this.http.get<EmailsToSend[]>(`${this.env.apiUrl}emails`);
   }
 
   public createArticle(dto: CreateArticleDto): Observable<ArticleDto> {
-    return this.http.post<ArticleDto>(this.environments.apiUrl + 'articles/create', dto);
+    return this.http.post<ArticleDto>(`${this.env.apiUrl}articles/create`, dto);
   }
 
   private prepareParams(config: ArticlesListConfig): HttpParams {
     let params: HttpParams = new HttpParams();
+    params = params.set('limit', config.limit.toString());
+    params = params.set('page', config.page.toString());
     if (config.search) {
       params = params.set('search', config.search);
-    }
-    if (config.page) {
-      params = params.set('page', config.page.toString());
-    }
-    if (config.limit) {
-      params = params.set('limit', config.limit.toString());
     }
     if (config.sortField) {
       params = params.set('sortField', config.sortField);
@@ -64,7 +61,7 @@ export class ArticlesService {
       params = params.set('sortOrder', config.sortOrder);
     }
     if (config.tags && config.tags.length) {
-      params = params.set('tags', config.tags.map(({id}) => id).join(','));
+      params = params.set('tags', config.tags.map(({ id }) => id).join(','));
     }
 
     return params;
