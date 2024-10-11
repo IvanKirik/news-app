@@ -69,18 +69,6 @@ export class CreateArticleModalComponent {
 
   public readonly emails: Signal<EmailsToSend[]> = this.config.data.emails;
   public readonly tags: Signal<Tag[]> = this.config.data.tags;
-  public readonly filteredEmails = signal<Partial<EmailsToSend>[]>([]);
-  public readonly filteredTags = signal<Partial<Tag>[]>([]);
-
-  public filteredEmail(event: AutoCompleteCompleteEvent) {
-    this.filteredEmails.set(
-      compareByPropName<EmailsToSend>(event, this.emails(), 'email'),
-    );
-  }
-
-  public filteredTag(event: AutoCompleteCompleteEvent) {
-    this.filteredTags.set(compareByPropName<Tag>(event, this.tags(), 'name'));
-  }
 
   public send(): void {
     const dto = this.form.getRawValue();
@@ -88,18 +76,4 @@ export class CreateArticleModalComponent {
       this.articlesStore.createArticle(dto);
     }
   }
-}
-
-function compareByPropName<T extends { [key: string]: string | number }>({ query }: AutoCompleteCompleteEvent, defaultArr: T[], propName: keyof T): Partial<T>[] {
-  let filtered: Partial<T>[] = [];
-  if (query) {
-    filtered.push({ [propName]: query } as Partial<T>);
-  }
-  for (let i = 0; i < defaultArr.length; i++) {
-    let item = defaultArr[i];
-    if (item[propName].toString().toLowerCase().indexOf(query.toLowerCase()) == 0) {
-      filtered.push(item);
-    }
-  }
-  return filtered;
 }
