@@ -33,7 +33,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputTextModule } from 'primeng/inputtext';
 import { TagPipe } from '../../pipes/tag.pipe';
 import { UrlPipe } from '../../../../core/pipes/url.pipe';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
 import { ArticlesListConfig } from '../../data-access/articles.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RequestStatus } from '../../../../core/signal-store-features';
@@ -41,10 +41,14 @@ import { LoaderService } from '../../../../core/services/loader.service';
 import { Sort } from '../../../../core/intefaces/sort.type';
 import { ImageUploaderComponent } from '../../../../shared/components/image-uploader/image-uploader.component';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { CreateArticleModalComponent } from '../../components/create-article-modal/create-article-modal.component';
+import {
+  CreateArticleDialogPayload,
+  CreateArticleModalComponent
+} from '../../components/create-article-modal/create-article-modal.component';
 import { Tag } from '../../data-access/dto/article.dto';
 import { ChipModule } from 'primeng/chip';
 import { TooltipModule } from 'primeng/tooltip';
+import { CreateArticleDto } from '../../data-access/dto/create-article.dto';
 
 @Component({
   selector: 'app-article-list',
@@ -88,8 +92,6 @@ export class ArticleListComponent implements OnInit {
   private readonly loaderService = inject(LoaderService);
   private readonly dialogService = inject(DialogService);
 
-  private createDialogRef: DynamicDialogRef;
-
   public readonly articles: Signal<ArticleEntity[]> =
     this.articlesStore.articles;
   public readonly filters: Signal<ArticlesListConfig> =
@@ -100,6 +102,8 @@ export class ArticleListComponent implements OnInit {
 
   public readonly searchControl = new FormControl('');
 
+  private createArticleDialog: DynamicDialogRef | undefined;
+
   constructor() {
     effect(() => {
       const requestStatus = this.requestStatus();
@@ -108,8 +112,8 @@ export class ArticleListComponent implements OnInit {
           ? this.loaderService.show()
           : this.loaderService.hide();
 
-        if (requestStatus === 'fulfilled' && this.createDialogRef) {
-          this.createDialogRef.destroy();
+        if (this.createArticleDialog && requestStatus === 'fulfilled') {
+          this.createArticleDialog.destroy();
         }
       });
     });
@@ -152,17 +156,29 @@ export class ArticleListComponent implements OnInit {
   }
 
   public create(): void {
-    this.createDialogRef = this.dialogService.open(
+    const dialogSubject$ = new Subject<CreateArticleDto>();
+    const payload: CreateArticleDialogPayload = {
+      data: {
+        tags: this.articlesStore.tags,
+        emails: this.articlesStore.emails,
+        event: dialogSubject$,
+        load: this.articlesStore.requestStatus
+      },
+    }
+    this.createArticleDialog = this.dialogService.open(
       CreateArticleModalComponent,
       {
         header: 'Добавить дайджест',
         width: '500px',
-        data: {
-          tags: this.articlesStore.tags,
-          emails: this.articlesStore.emails,
-        },
+        ...payload
       },
     );
+
+    dialogSubject$.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((dto) => {
+      this.articlesStore.createArticle(dto)
+    })
   }
 }
 

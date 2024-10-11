@@ -18,12 +18,15 @@ import { AutoCompleteCompleteEvent, AutoCompleteModule } from 'primeng/autocompl
 import { ArticlesStore } from '../../data-access/articles.store';
 import { RequestStatus } from '../../../../core/signal-store-features';
 import { MultiSelectModule, MultiSelectSelectAllChangeEvent } from 'primeng/multiselect';
-import { NgIf, NgStyle } from '@angular/common';
+import { AsyncPipe, NgIf, NgStyle } from '@angular/common';
+import { Observable, Subject } from 'rxjs';
 
 export type CreateArticleDialogPayload = {
   data: {
     emails: Signal<EmailsToSend[]>
-    tags: Signal<Tag[]>
+    tags: Signal<Tag[]>,
+    event: Subject<CreateArticleDto>
+    load: Signal<RequestStatus>
   }
 }
 
@@ -42,6 +45,7 @@ type Form = FlatControlsOf<CreateArticleDto>;
     MultiSelectModule,
     NgIf,
     NgStyle,
+    AsyncPipe,
   ],
   templateUrl: './create-article-modal.component.html',
   styleUrl: './create-article-modal.component.scss',
@@ -52,7 +56,6 @@ export class CreateArticleModalComponent {
     DynamicDialogConfig<CreateArticleDialogPayload>,
   );
   private readonly fb = inject(NonNullableFormBuilder);
-  private readonly articlesStore = inject(ArticlesStore);
 
   public readonly form = this.fb.group<Form>({
     title: this.fb.control('', Validators.required),
@@ -64,8 +67,8 @@ export class CreateArticleModalComponent {
     nameIsAuthor: this.fb.control('', Validators.required),
   });
 
-  public readonly requestStatus: Signal<RequestStatus> =
-    this.articlesStore.requestStatus;
+  private readonly submit$ = this.config.data.event;
+  public readonly load: Signal<RequestStatus> = this.config.data.load;
 
   public readonly emails: Signal<EmailsToSend[]> = this.config.data.emails;
   public readonly tags: Signal<Tag[]> = this.config.data.tags;
@@ -73,7 +76,7 @@ export class CreateArticleModalComponent {
   public send(): void {
     const dto = this.form.getRawValue();
     if (dto.title && dto.description && dto.emailIsAuthor && dto.image) {
-      this.articlesStore.createArticle(dto);
+      this.submit$.next(dto);
     }
   }
 }
