@@ -7,10 +7,7 @@ export class IndexedDbCrud<T, Tkey> {
     this.dbSet = dbSet;
   }
 
-  public getAll(filterDelegate: any | undefined = undefined): Promise<any[]> {
-    if (filterDelegate) {
-      return filterDelegate(this.dbSet).toArray();
-    }
+  public getAll(): Promise<unknown[]> {
     return this.dbSet.toArray();
   }
 
