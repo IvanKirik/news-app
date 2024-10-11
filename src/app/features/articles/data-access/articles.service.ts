@@ -9,7 +9,7 @@ import { ArticleDto, EmailsToSend, Tag } from './dto/article.dto';
 import { ArticleEntity } from './entities/article.entity';
 import { ArticleMapper } from './mappers/article.mapper';
 import { CreateArticleDto } from './dto/create-article.dto';
-import { Environment } from '../../../shared/intefaces/environment';
+import { Environment } from '../../../shared/intefaces';
 
 @Injectable({
   providedIn: 'root',

@@ -31,7 +31,7 @@ export class ImageUploaderComponent extends BaseValueAccessor<string> {
   private readonly fileUploadService = inject(FileUploadService);
 
   /**
-   * Counts up on all dragenter events and counts down on dragleave events.
+   * Counts up on all dragenter events and counts down on dragleave events.
    */
   private dragEnterCount = 0;
 

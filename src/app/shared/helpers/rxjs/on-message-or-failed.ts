@@ -6,7 +6,7 @@ import { catchError, Observable, tap, throwError } from 'rxjs';
  * @param callback Callback function.
  */
 export const onMessageOrFailed =
-  <T>(callback: Function) =>
+  <T>(callback: () => void) =>
     (source$: Observable<T>) =>
       source$.pipe(
         tap(() => callback()),

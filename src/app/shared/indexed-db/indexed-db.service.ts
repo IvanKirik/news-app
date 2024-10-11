@@ -8,10 +8,10 @@ import {IndexedDbCrud} from "./indexed-db.crud";
 export class DbService {
   private readonly indexDb = indexedDb;
 
-  public news: IndexedDbCrud<any, number>;
+  public news: IndexedDbCrud<unknown, number>;
 
   constructor() {
-    this.news = new IndexedDbCrud<any, number>(
+    this.news = new IndexedDbCrud<unknown, number>(
       this.indexDb.news
     );
   }

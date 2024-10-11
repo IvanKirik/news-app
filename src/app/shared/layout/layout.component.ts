@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { HeaderComponent } from './header/header.component';
-import { Router, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { LoaderService } from '../services/loader.service';
+import { LoaderService } from '../services';
 import { AsyncPipe } from '@angular/common';
 
 @Component({

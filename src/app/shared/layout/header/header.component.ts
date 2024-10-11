@@ -1,17 +1,11 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { ArticlesStore } from '../../../features/articles/data-access/articles.store';
 import { MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { ShowIfNotAuthenticatedDirective } from '../../directives/show-if-not-authenticated.directive';
+import { ShowIfNotAuthenticatedDirective } from '../../directives';
 
 @Component({
   selector: 'app-header',
@@ -29,13 +23,4 @@ import { ShowIfNotAuthenticatedDirective } from '../../directives/show-if-not-au
   styleUrl: './header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HeaderComponent implements OnInit {
-  private readonly articlesStore = inject(ArticlesStore);
-  public searchControl: FormControl<string> = new FormControl<string>('', {
-    nonNullable: true,
-  });
-
-  ngOnInit() {
-
-  }
-}
+export class HeaderComponent {}

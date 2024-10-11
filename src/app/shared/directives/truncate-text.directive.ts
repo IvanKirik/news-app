@@ -11,7 +11,7 @@ import {
  * Trims the text and inserts three dots at the end
  */
 @Directive({
-  selector: '[truncateText]',
+  selector: '[appTruncateText]',
   standalone: true,
 })
 export class TruncateTextDirective implements OnInit {
