@@ -13,6 +13,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Image } from '../../../core/intefaces/image.interface';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { UrlPipe } from '../../../core/pipes/url.pipe';
+import { BaseValueAccessor, controlProviderFor } from '../../../core/helpers';
 
 @Component({
   selector: 'app-image-uploader',
@@ -21,8 +22,11 @@ import { UrlPipe } from '../../../core/pipes/url.pipe';
   templateUrl: './image-uploader.component.html',
   styleUrl: './image-uploader.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    controlProviderFor(() => ImageUploaderComponent)
+  ]
 })
-export class ImageUploaderComponent {
+export class ImageUploaderComponent extends BaseValueAccessor<string> {
   private readonly destroyRef = inject(DestroyRef);
   private readonly fileUploadService = inject(FileUploadService);
 
@@ -33,7 +37,7 @@ export class ImageUploaderComponent {
 
   public multiple = input(false);
 
-  public readonly previewImage$ = new BehaviorSubject<Image | null>(null);
+  public readonly previewImage$ = new BehaviorSubject<string | null>(null);
 
   /**
    * Shown if drag and drop is possible.
@@ -113,6 +117,11 @@ export class ImageUploaderComponent {
     }
   }
 
+  public override writeValue(_value: string | null) {
+    super.writeValue(_value);
+    if (_value) this.previewImage$.next(_value);
+  }
+
   private uploadedFiles(files: File): void {
     const formData = new FormData();
     formData.set('files', files);
@@ -120,7 +129,8 @@ export class ImageUploaderComponent {
       .upload(formData)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result) => {
-        this.previewImage$.next(result[1])
+        this.previewImage$.next(result[1].url);
+        this.emitChange(result[1].url);
       });
   }
 

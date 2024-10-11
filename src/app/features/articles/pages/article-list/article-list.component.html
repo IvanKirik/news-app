@@ -1,8 +1,19 @@
 <div class="articles-head">
   <div class="actions">
-    <p-button
-      (click)="create()"
-      label="Добавить дайджест" [rounded]="true" />
+    <div class="filters">
+      @for (tag of filters().tags; track tag.id) {
+        <p-chip [label]="tag | tag"
+                [removable]="true"
+                (click)="checkTag(tag)"
+        />
+      }
+    </div>
+    <div class="buttons">
+      <p-button
+        (click)="create()"
+        label="Добавить дайджест"
+        [rounded]="true" />
+    </div>
   </div>
   <div class="nav">
     <p-iconField iconPosition="left">
@@ -10,7 +21,7 @@
       <input type="text"
              [formControl]="searchControl"
              pInputText
-             placeholder="Search" />
+             placeholder="Поиск по названию" />
     </p-iconField>
     <div class="sort">
       @if (filters().sortField === 'title' && filters().sortOrder === 'DESC') {
@@ -19,14 +30,20 @@
           icon="pi pi-sort-alpha-down"
           [rounded]="true"
           [text]="true"
-          [autofocus]="filters().sortField === 'title' && filters().sortOrder === 'ASC'" />
+          [autofocus]="filters().sortField === 'title' && filters().sortOrder === 'ASC'"
+          pTooltip="По названию"
+          tooltipPosition="bottom"
+        />
       } @else {
         <p-button
           (click)="sort('title', 'DESC')"
           icon="pi pi-sort-alpha-down-alt"
           [rounded]="true"
           [text]="true"
-          [autofocus]="filters().sortField === 'title' && filters().sortOrder === 'DESC'"/>
+          [autofocus]="filters().sortField === 'title' && filters().sortOrder === 'DESC'"
+          pTooltip="По названию"
+          tooltipPosition="bottom"
+        />
       }
       @if (filters().sortField === 'createdAt' && filters().sortOrder === 'DESC') {
         <p-button
@@ -34,14 +51,20 @@
           icon="pi pi-sort-amount-down"
           [rounded]="true"
           [text]="true"
-          [autofocus]="filters().sortField === 'createdAt' && filters().sortOrder === 'ASC'"/>
+          [autofocus]="filters().sortField === 'createdAt' && filters().sortOrder === 'ASC'"
+          pTooltip="По дате"
+          tooltipPosition="bottom"
+        />
       } @else {
         <p-button
           (click)="sort('createdAt', 'DESC')"
           icon="pi pi-sort-amount-down-alt"
           [rounded]="true"
           [text]="true"
-          [autofocus]="filters().sortField === 'createdAt' && filters().sortOrder === 'ASC'"/>
+          [autofocus]="filters().sortField === 'createdAt' && filters().sortOrder === 'ASC'"
+          pTooltip="По дате"
+          tooltipPosition="bottom"
+        />
       }
     </div>
   </div>
@@ -49,27 +72,37 @@
 <div class="article-list-container">
   <div class="articles">
     @for (article of articles(); track article.id) {
-      <mat-card appearance="outlined">
+      <mat-card appearance="outlined"
+      class="card-item"
+      [routerLink]="article.id.toString()"
+      >
         <mat-card-header [style.margin-bottom.px]="15">
-          @if (article.nameIsAuthor) {
-            <mat-card-title>Sheba Inu</mat-card-title>
-          } @else {
-            <mat-card-title>Sheba Inu</mat-card-title>
-          }
-          @if (article.emailIsAuthor) {
-            <mat-card-subtitle>Dog Breed</mat-card-subtitle>
-          } @else {
-            <mat-card-subtitle>Dog Breed</mat-card-subtitle>
-          }
+          <mat-card-title>{{ article.nameIsAuthor || 'Имя автора' }}</mat-card-title>
+          <mat-card-subtitle>{{ article.emailIsAuthor || 'Email автора' }}</mat-card-subtitle>
         </mat-card-header>
-        <img mat-card-image [src]="article.image | url" [alt]="article.image"/>
+        <img mat-card-image
+             width="100%"
+             height="213px"
+             [src]="article.image | url"
+             [alt]="article.image"/>
         <mat-card-content>
           <h6 class="article-item__title" truncateText>
             {{ article.title }}
           </h6>
-          <p>
-            {{ article.tags | tag }}
-          </p>
+          <div>
+            @for (tagItem of article.tags; track tagItem.id; let i = $index) {
+              <span class="tag"
+               [class.checked]="includeTag(tagItem)"
+               (click)="checkTag(tagItem); $event.stopPropagation()"
+              >
+                @if ($index !== article.tags.length - 1) {
+                  {{ tagItem | tag }},
+                } @else {
+                  {{ tagItem | tag }}
+                }
+              </span>
+            }
+          </div>
         </mat-card-content>
       </mat-card>
     }

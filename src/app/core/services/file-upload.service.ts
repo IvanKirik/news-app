@@ -1,5 +1,4 @@
 import { inject, Injectable } from '@angular/core';
-import { ApiService } from './api/api.service';
 import { Observable } from 'rxjs';
 import {  ImageTuple } from '../intefaces/image.interface';
 import { HttpClient } from '@angular/common/http';

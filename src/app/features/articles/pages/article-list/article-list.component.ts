@@ -1,10 +1,12 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  DestroyRef, effect,
+  DestroyRef,
+  effect,
   inject,
   OnInit,
-  Signal, untracked
+  Signal,
+  untracked,
 } from '@angular/core';
 import { ArticlesStore } from '../../data-access/articles.store';
 import { JsonPipe, NgForOf, NgOptimizedImage } from '@angular/common';
@@ -14,9 +16,11 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import {
   MatCard,
-  MatCardContent, MatCardHeader,
-  MatCardImage, MatCardSubtitle,
-  MatCardTitle
+  MatCardContent,
+  MatCardHeader,
+  MatCardImage,
+  MatCardSubtitle,
+  MatCardTitle,
 } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
@@ -29,15 +33,18 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputTextModule } from 'primeng/inputtext';
 import { TagPipe } from '../../pipes/tag.pipe';
 import { UrlPipe } from '../../../../core/pipes/url.pipe';
-import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ArticlesListConfig } from '../../data-access/articles.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RequestStatus } from '../../../../core/signal-store-features';
 import { LoaderService } from '../../../../core/services/loader.service';
 import { Sort } from '../../../../core/intefaces/sort.type';
 import { ImageUploaderComponent } from '../../../../shared/components/image-uploader/image-uploader.component';
-import { DialogService } from 'primeng/dynamicdialog';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { CreateArticleModalComponent } from '../../components/create-article-modal/create-article-modal.component';
+import { Tag } from '../../data-access/dto/article.dto';
+import { ChipModule } from 'primeng/chip';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-article-list',
@@ -68,17 +75,20 @@ import { CreateArticleModalComponent } from '../../components/create-article-mod
     TagPipe,
     UrlPipe,
     ImageUploaderComponent,
+    ChipModule,
+    TooltipModule,
   ],
   templateUrl: './article-list.component.html',
   styleUrl: './article-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [DialogService]
 })
 export class ArticleListComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly articlesStore = inject(ArticlesStore);
   private readonly loaderService = inject(LoaderService);
   private readonly dialogService = inject(DialogService);
+
+  private createDialogRef: DynamicDialogRef;
 
   public readonly articles: Signal<ArticleEntity[]> =
     this.articlesStore.articles;
@@ -97,12 +107,18 @@ export class ArticleListComponent implements OnInit {
         requestStatus === 'pending'
           ? this.loaderService.show()
           : this.loaderService.hide();
+
+        if (requestStatus === 'fulfilled' && this.createDialogRef) {
+          this.createDialogRef.destroy();
+        }
       });
     });
   }
 
   public ngOnInit() {
     this.articlesStore.loadAll(this.articlesStore.config);
+    this.articlesStore.loadTags();
+    this.articlesStore.loadEmails();
 
     this.searchControl.valueChanges
       .pipe(
@@ -126,10 +142,38 @@ export class ArticleListComponent implements OnInit {
     });
   }
 
-  public create(): void {
-    const ref = this.dialogService.open(CreateArticleModalComponent, {
-      header: 'Добавить дайджест',
-      width: '500px'
-    })
+  public checkTag(tag: Tag) {
+    const tags = filtersArray<Tag>(this.filters().tags!, tag, 'id');
+    this.articlesStore.searchTags({ tags });
   }
+
+  public includeTag(tag: Tag): boolean {
+    return !!this.filters().tags.find((item) => item.id === tag.id);
+  }
+
+  public create(): void {
+    this.createDialogRef = this.dialogService.open(
+      CreateArticleModalComponent,
+      {
+        header: 'Добавить дайджест',
+        width: '500px',
+        data: {
+          tags: this.articlesStore.tags,
+          emails: this.articlesStore.emails,
+        },
+      },
+    );
+  }
+}
+
+function filtersArray<T>(
+  defaultArr: Array<T>,
+  value: T,
+  key?: keyof T,
+): Array<T> {
+  const index = defaultArr.filter((item) => item).findIndex((item: T) =>
+    key ? item[key] === value[key] : item === value,
+  );
+  index >= 0 ? defaultArr.splice(index, 1) : defaultArr.push(value);
+  return defaultArr;
 }

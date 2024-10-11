@@ -7,8 +7,8 @@ import { Tag } from '../data-access/dto/article.dto';
 })
 export class TagPipe implements PipeTransform {
 
-  transform(tags: Tag[]): string {
-    return tags.map((tag) => `#${tag.name}`).join(', ');
+  transform(tag: Tag): string {
+    return `#${tag.name}`;
   }
 
 }

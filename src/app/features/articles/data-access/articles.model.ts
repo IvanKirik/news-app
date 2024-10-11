@@ -1,5 +1,6 @@
 import { ArticleEntity } from './entities/article.entity';
 import { Sort } from '../../../core/intefaces/sort.type';
+import { EmailsToSend, Tag } from './dto/article.dto';
 
 export const articlesInitialState: ArticlesState = {
   articles: [],
@@ -10,8 +11,11 @@ export const articlesInitialState: ArticlesState = {
     limit: 8,
     sortField: 'createdAt',
     sortOrder: 'ASC',
+    tags: []
   },
   total: 0,
+  tags: [],
+  emails: []
 };
 
 export interface ArticlesState {
@@ -19,6 +23,8 @@ export interface ArticlesState {
   loading: boolean;
   config: ArticlesListConfig;
   total: number;
+  tags: Tag[],
+  emails: EmailsToSend[]
 }
 
 export interface PaginatedArticlesResponse<T> {
@@ -35,8 +41,5 @@ export interface ArticlesListConfig {
   limit: number;
   sortField?: string;
   sortOrder?: Sort;
+  tags: Tag[];
 }
-
-export type Nullable<T> = {
-  [P in keyof T]?: T[P] | null;
-};

@@ -13,11 +13,13 @@ export interface ArticleDto {
 }
 
 export interface Tag {
+  [key: string]: string | number,
   id: number
   name: string
 }
 
 export interface EmailsToSend {
+  [key: string]: string | number,
   id: number
   email: string
 }

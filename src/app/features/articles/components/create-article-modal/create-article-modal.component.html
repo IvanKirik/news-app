@@ -1,1 +1,74 @@
-<p>create-article-modal works!</p>
+<form [formGroup]="form">
+  <app-image-uploader
+    formControlName="image"
+  ></app-image-uploader>
+  <div class="form-group">
+    <label for="title">Заголовок</label>
+    <input
+      formControlName="title"
+      placeholder="Введите заголовок"
+      pInputText
+      id="title"
+      aria-describedby="username-help" />
+  </div>
+  <div class="form-group">
+    <label for="username">Имя автора</label>
+    <input
+      formControlName="nameIsAuthor"
+      placeholder="Введите имя автора"
+      pInputText
+      id="username"
+      aria-describedby="username-help" />
+  </div>
+  <div class="form-group">
+    <label for="authorEmail">Почта автора</label>
+    <input
+      formControlName="emailIsAuthor"
+      placeholder="Введите почту автора"
+      pInputText
+      id="authorEmail"
+      aria-describedby="username-help" />
+  </div>
+  <div class="form-group">
+    <label for="content">Текст дайджеста</label>
+    <textarea
+      formControlName="description"
+      placeholder="Введите текст дайджеста"
+      id="content"
+      rows="5"
+      cols="30"
+      pInputTextarea>
+</textarea>
+  </div>
+  <div class="form-group">
+    <label for="emails">Почты для рассылки</label>
+    <p-multiSelect
+      id="emails"
+      [style]="{ width: '100%' }"
+      [options]="emails()"
+      formControlName="emails"
+      [filter]="true"
+      optionLabel="email"
+      placeholder="Выберите почты для рассылки" />
+  </div>
+  <div class="form-group">
+    <label for="tags">Теги</label>
+    <p-multiSelect
+      id="tags"
+      [style]="{ width: '100%' }"
+      [options]="tags()"
+      formControlName="tags"
+      [filter]="true"
+      optionLabel="name"
+      placeholder="Выберите теги" />
+  </div>
+</form>
+  <div class="actions">
+    <p-button
+      [disabled]="form.invalid"
+      [loading]="requestStatus() === 'pending'"
+      (click)="send()"
+      label="Отправить"
+      [rounded]="true" />
+  </div>
+

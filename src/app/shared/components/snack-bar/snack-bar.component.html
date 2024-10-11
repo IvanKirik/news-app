@@ -1,0 +1,16 @@
+<div class="message-container" [ngClass]="data.type">
+  <div [ngSwitch]="data.type" class="content">
+    <span class="title" *ngSwitchCase="snackbarMessageType.Error">Ошибка</span>
+    <span class="title" *ngSwitchCase="snackbarMessageType.Warning"
+    >Предупреждение</span
+    >
+    <span class="title" *ngSwitchCase="snackbarMessageType.Success"
+    >Успешно</span
+    >
+    <span class="title" *ngSwitchDefault>Действие выполнено!</span>
+    <span class="text"> {{ data.message }}</span>
+  </div>
+  <i class="pi pi-times close-button"
+     (click)="close()"
+  ></i>
+</div>

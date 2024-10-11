@@ -13,8 +13,4 @@ export class ArticleMapper {
       updatedAt: new Date(dto.updatedAt),
     }
   }
-
-  public toDto(entity: ArticleEntity) {
-
-  }
 }

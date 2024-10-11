@@ -1,0 +1,97 @@
+:host {
+  display: block;
+  padding-top: 10px;
+  padding-right: 10px;
+}
+
+.content {
+  display: flex;
+  align-items: start;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.title {
+  font-family: Inter, sans-serif;
+  line-height: 21px;
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.text {
+  font-family: Inter, sans-serif;
+  color: #5d5f6e;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
+}
+
+.close-button {
+  color: black;
+  --mdc-icon-button-state-layer-size: var(--font-size-large);
+  width: var(--font-size-large);
+  height: var(--font-size-large);
+  font-size: var(--font-size-large);
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.small-icon {
+  width: var(--font-size-large);
+  height: var(--font-size-large);
+  --mdc-icon-button-icon-size: --font-size-large;
+  line-height: var(--font-size-large);
+  font-size: var(--font-size-large);
+}
+
+.info-icon {
+  color: var(--success-color-500);
+}
+.dangerous .info-icon {
+  color: var(--warn-color-500);
+}
+
+.message-container {
+  width: 428px;
+  display: flex;
+  position: relative;
+  align-items: center;
+  min-height: 88px;
+  padding: 9px 26px;
+  gap: 12px;
+  border-radius: 8px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px -1px #dedee759;
+  box-sizing: border-box;
+}
+
+.success {
+  &.message-container {
+    border-bottom: 5px solid #17b427;
+    .title {
+      color: #17b427;
+    }
+  }
+}
+
+.warning {
+  &.message-container {
+    border-bottom: 5px solid #e89d0d;
+    .title {
+      color: #e89d0d;
+    }
+  }
+}
+
+.error {
+  &.message-container {
+    border-bottom: 5px solid #f72929;
+    .title {
+      color: #f72929;
+    }
+  }
+}

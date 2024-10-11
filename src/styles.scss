@@ -35,3 +35,8 @@ body {
   border-radius: 10px;
   background: #EEEEEE;
 }
+
+.mat-mdc-snack-bar-container .mat-mdc-snackbar-surface{
+  background-color: transparent!important;
+  box-shadow: none;
+}

@@ -1,18 +1,18 @@
-<button (click)="fileInput.click()">
+<button (click)="fileInput.click(); $event.preventDefault(); $event.stopPropagation()">
   <div class="placeholder"
   *ngIf="!(previewImage$ | async)"
   >
       <div
         class="drag-hint"
         [hidden]="(onDrag || onWrongDrag)"
-      >Перетащите файл для загрузки</div>
+      >Перетащите изображение для загрузки</div>
   <div class="drag-hint on-drag"
        [hidden]="!onDrag"
   >Отпустите файл здесь</div>
   </div>
   <img
     *ngIf="previewImage$ | async as image"
-    [src]="image.url | url" [alt]="image.name">
+    [src]="image | url" [alt]="'image'">
 </button>
 
 <input

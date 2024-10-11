@@ -1,3 +1,28 @@
 :host {
   display: block;
 }
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  padding-bottom: 84px;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 20px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  padding: 20px;
+  border-radius: 6px;
+}
