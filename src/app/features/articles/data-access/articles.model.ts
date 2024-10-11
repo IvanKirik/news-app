@@ -1,5 +1,5 @@
 import { ArticleEntity } from './entities/article.entity';
-import { Sort } from '../../../core/intefaces/sort.type';
+import { Sort } from '../../../shared/intefaces/sort.type';
 import { EmailsToSend, Tag } from './dto/article.dto';
 
 export const articlesInitialState: ArticlesState = {

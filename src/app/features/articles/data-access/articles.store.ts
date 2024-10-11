@@ -14,15 +14,15 @@ import {
   setFulfilled,
   setPending,
   withRequestStatus,
-} from '../../../core/signal-store-features';
+} from '../../../shared/signal-store-features';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Sort } from '../../../core/intefaces/sort.type';
+import { Sort } from '../../../shared/intefaces';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { Tag } from './dto/article.dto';
 import {
   SnackbarMessageType,
   SnackBarService,
-} from '../../../shared/services/snack-bar.service';
+} from '../../../shared/services';
 
 export const ArticlesStore = signalStore(
   { providedIn: 'root' },

@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { map, Observable, take } from 'rxjs';
 import { Router, UrlTree } from '@angular/router';
-import { LocalStorageService } from './local-storage.service';
+import { LocalStorageService } from '../../../shared/services';
 
 export const noAuthGuard = (): Observable<boolean | UrlTree> => {
   const storage = inject(LocalStorageService);

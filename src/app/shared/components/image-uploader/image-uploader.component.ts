@@ -7,13 +7,13 @@ import {
   inject,
   input
 } from '@angular/core';
-import { FileUploadService } from '../../../core/services/file-upload.service';
+import { FileUploadService } from '../../services/file-upload.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BehaviorSubject } from 'rxjs';
-import { Image } from '../../../core/intefaces/image.interface';
+import { Image } from '../../intefaces/image.interface';
 import { AsyncPipe, NgIf } from '@angular/common';
-import { UrlPipe } from '../../../core/pipes/url.pipe';
-import { BaseValueAccessor, controlProviderFor } from '../../../core/helpers';
+import { UrlPipe } from '../../pipes/url.pipe';
+import { BaseValueAccessor, controlProviderFor } from '../../helpers';
 
 @Component({
   selector: 'app-image-uploader',

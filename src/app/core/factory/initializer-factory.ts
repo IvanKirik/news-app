@@ -1,4 +1,4 @@
-import { LocalStorageService } from '../../features/auth/data-access/local-storage.service';
+import { LocalStorageService } from '../../shared/services/local-storage.service';
 import { AuthStore } from '../../features/auth/data-access/auth.store';
 import { inject } from '@angular/core';
 

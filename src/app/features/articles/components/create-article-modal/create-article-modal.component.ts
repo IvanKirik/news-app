@@ -2,33 +2,35 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  signal,
   Signal,
 } from '@angular/core';
-import { ImageUploaderComponent } from '../../../../shared/components/image-uploader/image-uploader.component';
+import { ImageUploaderComponent } from '../../../../shared/components';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { Button } from 'primeng/button';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { EmailsToSend, Tag } from '../../data-access/dto/article.dto';
-import { FlatControlsOf } from '../../../../core/helpers';
+import { FlatControlsOf } from '../../../../shared/helpers';
 import { CreateArticleDto } from '../../data-access/dto/create-article.dto';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AutoCompleteCompleteEvent, AutoCompleteModule } from 'primeng/autocomplete';
-import { ArticlesStore } from '../../data-access/articles.store';
-import { RequestStatus } from '../../../../core/signal-store-features';
-import { MultiSelectModule, MultiSelectSelectAllChangeEvent } from 'primeng/multiselect';
+import {
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { RequestStatus } from '../../../../shared/signal-store-features';
+import { MultiSelectModule } from 'primeng/multiselect';
 import { AsyncPipe, NgIf, NgStyle } from '@angular/common';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 
 export type CreateArticleDialogPayload = {
   data: {
-    emails: Signal<EmailsToSend[]>
-    tags: Signal<Tag[]>,
-    event: Subject<CreateArticleDto>
-    load: Signal<RequestStatus>
-  }
-}
+    emails: Signal<EmailsToSend[]>;
+    tags: Signal<Tag[]>;
+    event: Subject<CreateArticleDto>;
+    load: Signal<RequestStatus>;
+  };
+};
 
 type Form = FlatControlsOf<CreateArticleDto>;
 

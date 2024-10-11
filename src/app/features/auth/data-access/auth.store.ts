@@ -5,7 +5,7 @@ import { exhaustMap, pipe } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
 import { authInitialState, AuthState, UserState } from './auth.model';
 import { AuthService } from './auth.service';
-import { LocalStorageService } from './local-storage.service';
+import { LocalStorageService } from '../../../shared/services';
 import { Router } from '@angular/router';
 
 export const AuthStore = signalStore(

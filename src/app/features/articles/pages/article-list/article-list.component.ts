@@ -27,23 +27,23 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { CardModule } from 'primeng/card';
 import { Button } from 'primeng/button';
 import { ArticleEntity } from '../../data-access/entities/article.entity';
-import { TruncateTextDirective } from '../../../../core/directives/truncate-text.directive';
+import { TruncateTextDirective } from '../../../../shared/directives';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputTextModule } from 'primeng/inputtext';
 import { TagPipe } from '../../pipes/tag.pipe';
-import { UrlPipe } from '../../../../core/pipes/url.pipe';
-import { debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
+import { UrlPipe } from '../../../../shared/pipes';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { ArticlesListConfig } from '../../data-access/articles.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RequestStatus } from '../../../../core/signal-store-features';
-import { LoaderService } from '../../../../core/services/loader.service';
-import { Sort } from '../../../../core/intefaces/sort.type';
-import { ImageUploaderComponent } from '../../../../shared/components/image-uploader/image-uploader.component';
+import { RequestStatus } from '../../../../shared/signal-store-features';
+import { LoaderService } from '../../../../shared/services';
+import { Sort } from '../../../../shared/intefaces';
+import { ImageUploaderComponent } from '../../../../shared/components';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import {
   CreateArticleDialogPayload,
-  CreateArticleModalComponent
+  CreateArticleModalComponent,
 } from '../../components/create-article-modal/create-article-modal.component';
 import { Tag } from '../../data-access/dto/article.dto';
 import { ChipModule } from 'primeng/chip';
@@ -162,23 +162,23 @@ export class ArticleListComponent implements OnInit {
         tags: this.articlesStore.tags,
         emails: this.articlesStore.emails,
         event: dialogSubject$,
-        load: this.articlesStore.requestStatus
+        load: this.articlesStore.requestStatus,
       },
-    }
+    };
     this.createArticleDialog = this.dialogService.open(
       CreateArticleModalComponent,
       {
         header: 'Добавить дайджест',
         width: '500px',
-        ...payload
+        ...payload,
       },
     );
 
-    dialogSubject$.pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((dto) => {
-      this.articlesStore.createArticle(dto)
-    })
+    dialogSubject$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((dto) => {
+        this.articlesStore.createArticle(dto);
+      });
   }
 }
 
