@@ -12,7 +12,9 @@
     "test": "ng test",
     "lint": "ng lint",
     "format:test": "prettier --list-different .//*.{ts,html,scss,json}",
-    "format:write": "prettier --write .//*.{ts,html,scss,json}"
+    "format:write": "prettier --write .//*.{ts,html,scss,json}",
+    "api-generate": "npx openapi-typescript http://localhost:3000/swagger/yaml -o ./src/app/api/api-schema.d.ts --properties-required-by-default --default-non-nullable --immutable --enum --root-types"
+
   },
   "private": true,
   "dependencies": {
