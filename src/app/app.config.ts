@@ -1,10 +1,14 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import {
+  APP_INITIALIZER,
+  ApplicationConfig,
+  provideZoneChangeDetection,
+} from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { environment } from '../environments';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { Environment } from './core/intefaces/environment';
 import { DialogService } from 'primeng/dynamicdialog';
 
@@ -16,5 +20,11 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     DialogService,
     { provide: Environment, useValue: environment },
+    provideHttpClient(withInterceptors([tokenInterceptor])),
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appInitializerFactory,
+    },
+
   ],
 };
