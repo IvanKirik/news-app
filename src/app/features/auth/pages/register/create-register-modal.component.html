@@ -1,0 +1,34 @@
+<div class="register-container">
+  <form class="login-form" [formGroup]="loginForm" (ngSubmit)="loginForm.valid && onSubmit()">
+    <div class="form-field">
+      <label for="email">Почта</label>
+      <input
+        type="text"
+        formControlName="email"
+        pInputText
+        id="email" />
+    </div>
+
+    <div class="form-field">
+      <label for="password">Пароль</label>
+      <input
+        type="password"
+        formControlName="password"
+        pInputText
+        id="password" />
+    </div>
+
+    <div class="login-link">
+      <p (click)="switchToLogin()" class="register-text">Уже есть аккаунт? Войти</p>
+    </div>
+
+    <div class="actions">
+      <p-button
+        type="submit"
+        class="login-button"
+        label="Зарегестрироваться"
+        [rounded]="true"
+      ></p-button>
+    </div>
+  </form>
+</div>

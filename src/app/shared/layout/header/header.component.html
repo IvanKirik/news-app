@@ -1,5 +1,21 @@
 <header>
   <div class="container">
-
+    <button pButton
+            pRipple
+            type="button"
+            icon="pi pi-user"
+            class="p-button-rounded p-button-info"
+            (click)="openLoginModal()"
+    > &nbsp;Войти
+    </button>
+    <button appShowIfNotAuthenticated
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-user"
+            class="p-button-rounded p-button-info"
+            (click)="openRegisterModal()"
+    >&nbsp;Зарегестрироваться
+    </button>
   </div>
 </header>

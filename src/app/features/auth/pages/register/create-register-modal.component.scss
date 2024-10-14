@@ -1,0 +1,47 @@
+@import "../../../../../styles/mixins";
+
+.register-container {
+  @include flex(column, center, center);
+  gap: 20px;
+  width: 100%;
+
+  .login-form {
+    display: flex;
+    flex-direction: column;
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
+    .login-link {
+      color: #1976d2;
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+      margin-bottom: 16px;
+
+      a {
+        color: #1976d2;
+        text-decoration: none;
+        font-size: 14px;
+        cursor: pointer;
+        display: inline-block;
+        margin: 0 auto;
+
+        &:hover {
+          text-decoration: underline;
+          color: #3f51b5;
+        }
+      }
+    }
+    .actions {
+      @include flex(column, center, center);
+    }
+  }
+
+
+}
+
