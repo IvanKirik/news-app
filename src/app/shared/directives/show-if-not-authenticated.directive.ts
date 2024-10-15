@@ -19,10 +19,10 @@ export class ShowIfNotAuthenticatedDirective {
   private readonly el = inject(ElementRef);
   private readonly destroyRef = inject(DestroyRef);
 
-  public $isLoggedIn: Signal<boolean> = this.authStore.loggedIn;
+  public isLoggedIn: Signal<boolean> = this.authStore.loggedIn;
 
   constructor() {
-    toObservable(this.$isLoggedIn)
+    toObservable(this.isLoggedIn)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((isLoggedIn: boolean) => {
         if (isLoggedIn) {

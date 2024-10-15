@@ -35,6 +35,12 @@ export const AuthStore = signalStore(
           loggedIn,
         }));
       },
+      setLoggedOut(): void {
+        patchState(store, (state) => ({
+          ...state,
+          loggedIn: false,
+        }));
+      },
       login: rxMethod<UserState>(
         pipe(
           tap(() => patchState(store, setPending())),
@@ -50,7 +56,7 @@ export const AuthStore = signalStore(
                     },
                     setFulfilled(),
                   );
-                  localStorageService.setItem(tokens.access_token);
+                  localStorageService.setTokens(tokens.access_token, tokens.refresh_token)
                 },
                 error: ({ message }: HttpErrorResponse) => {
                   patchState(store, { loggedIn: false }, setError(message));
@@ -84,6 +90,13 @@ export const AuthStore = signalStore(
           ),
         ),
       ),
+
+      // logout: rxMethod<void>(
+      //   pipe(
+      //     tap(()=> patchState(store, setPending())),
+      //     exhaustMap
+      //   )
+      // )
     }),
   ),
 );

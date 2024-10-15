@@ -1,21 +1,16 @@
 <header>
   <div class="container">
-    <button pButton
-            pRipple
-            type="button"
-            icon="pi pi-user"
-            class="p-button-rounded p-button-info"
-            (click)="openLoginModal()"
-    > &nbsp;Войти
-    </button>
-    <button appShowIfNotAuthenticated
-            pButton
-            pRipple
-            type="button"
-            icon="pi pi-user"
-            class="p-button-rounded p-button-info"
-            (click)="openRegisterModal()"
-    >&nbsp;Зарегестрироваться
-    </button>
+    <button type="button" pButton label="" icon="pi pi-user" (click)="op.toggle($event)"></button>
+
+    <p-overlayPanel #op [showTransitionOptions]="'300ms'" [hideTransitionOptions]="'300ms'">
+      <ng-template pTemplate>
+        @if (isLoggedIn()) {
+          <div class="option" (click)="userExit()">Выйти</div>
+        } @else {
+          <div class="option" (click)="openLoginModal() ">Войти</div>
+          <div class="option" (click)="openRegisterModal()">Зарегестрироваться</div>
+        }
+      </ng-template>
+    </p-overlayPanel>
   </div>
 </header>

@@ -1,16 +1,13 @@
 import { HttpEvent, HttpHandlerFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LocalStorageService } from '../../../shared/services';
+import { LocalStorageService } from '../services';
 
 export const tokenInterceptor = (
   request: HttpRequest<any>,
   next: HttpHandlerFn,
 ): Observable<HttpEvent<any>> => {
-  let token: string | null = null;
-  inject(LocalStorageService)
-    .getItem()
-    .subscribe((t) => (token = t));
+  const token: string | null = inject(LocalStorageService).getTokens().accessToken;
 
   if (token) {
     request = request.clone({

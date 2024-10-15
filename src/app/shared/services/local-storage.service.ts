@@ -1,27 +1,27 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class LocalStorageService {
-  public getItem(): Observable<string | null> {
-    const data = localStorage.getItem('access_token');
-    if (data) {
-      return of(data);
-    }
-    return of(null);
+  public accessTokenKey: string = 'accessToken';
+  public refreshTokenKey: string = 'refreshToken';
+
+  public setTokens(accessToken: string, refreshToken: string): void {
+    localStorage.setItem(this.accessTokenKey, accessToken);
+    localStorage.setItem(this.refreshTokenKey, refreshToken);
   }
 
-  public getAccessToken(): string | null {
-    return localStorage.getItem('access_token');
+  public getTokens(): {
+    accessToken: string | null;
+    refreshToken: string | null;
+  } {
+    return {
+      accessToken: localStorage.getItem(this.accessTokenKey),
+      refreshToken: localStorage.getItem(this.refreshTokenKey),
+    };
   }
 
-  public setItem(data: string): Observable<string> {
-    localStorage.setItem('access_token', data);
-    return of(data);
-  }
-
-  public removeItem(): Observable<boolean> {
-    localStorage.removeItem('access_token');
-    return of(true);
+  public removeTokens(): void {
+    localStorage.removeItem(this.accessTokenKey);
+    localStorage.removeItem(this.refreshTokenKey);
   }
 }

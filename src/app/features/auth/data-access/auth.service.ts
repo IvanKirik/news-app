@@ -16,4 +16,13 @@ export class AuthService {
   public register(dto: UserState): Observable<void> {
     return this.http.post<void>(`${this.env.apiUrl}auth/register`, dto);
   }
+
+  //todo implement on bakcend
+  public logout(): Observable<void> {
+    return this.http.post<void>(`${this.env.apiUrl}auth/logout`, {});
+  }
+
+  public refresh(accessToken: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.env.apiUrl}auth/refresh`, accessToken);
+  }
 }

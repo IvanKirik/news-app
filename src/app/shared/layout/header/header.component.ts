@@ -20,7 +20,8 @@ import { ButtonDirective } from 'primeng/button';
 import { Ripple } from 'primeng/ripple';
 import { ShowIfNotAuthenticatedDirective } from '../../directives';
 import { RequestStatus } from '../../signal-store-features';
-import { LoaderService } from '../../services';
+import { LoaderService, LocalStorageService } from '../../services';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 @Component({
   selector: 'app-header',
@@ -28,16 +29,23 @@ import { LoaderService } from '../../services';
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ButtonDirective, Ripple, ShowIfNotAuthenticatedDirective],
+  imports: [
+    ButtonDirective,
+    Ripple,
+    ShowIfNotAuthenticatedDirective,
+    OverlayPanelModule,
+  ],
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   private readonly dialogService = inject(DialogService);
   private readonly authStore = inject(AuthStore);
   private readonly loaderService = inject(LoaderService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly localStorageService = inject(LocalStorageService);
 
   public readonly requestStatus: Signal<RequestStatus> =
     this.authStore.requestStatus;
+  public isLoggedIn: Signal<boolean> = this.authStore.loggedIn;
   private readonly currentModal$ = new Subject<'login' | 'register'>();
 
   private createDialog: DynamicDialogRef | undefined;
@@ -108,6 +116,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .subscribe((dto) => {
         this.authStore.register(dto);
       });
+  }
+
+  public userExit(): void {
+    //todo add backend on user exit, change to authStore logout
+    this.localStorageService.removeTokens();
+    this.authStore.setLoggedOut();
   }
 
   ngOnDestroy() {
