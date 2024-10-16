@@ -12,14 +12,13 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { Environment } from '../shared/intefaces';
 import { DialogService } from 'primeng/dynamicdialog';
 import { appInitializerFactory } from './factory/initializer-factory';
-import { tokenInterceptor } from '../shared/interceptors/token.interceptor';
 import { authInterceptor } from '../shared/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(withInterceptors([tokenInterceptor, authInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor])),
     provideAnimationsAsync(),
     DialogService,
     { provide: Environment, useValue: environment },
