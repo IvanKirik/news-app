@@ -1,10 +1,10 @@
 import { inject } from '@angular/core';
 import { Router, UrlTree } from '@angular/router';
-import { LocalStorageService } from '../services';
+import { CookieTokenService } from '../services/cookie-token.service';
 
 export const noAuthGuard = (): boolean | UrlTree => {
   const router = inject(Router);
-  const token = inject(LocalStorageService).getTokens().accessToken;
+  const token = inject(CookieTokenService).getTokens().accessToken;
 
   return token ? true : router.parseUrl('');
 };

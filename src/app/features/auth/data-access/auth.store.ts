@@ -17,6 +17,7 @@ import {
   withRequestStatus,
 } from '../../../shared/signal-store-features';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CookieTokenService } from '../../../shared/services/cookie-token.service';
 
 export const AuthStore = signalStore(
   { providedIn: 'root' },
@@ -26,7 +27,7 @@ export const AuthStore = signalStore(
     (
       store,
       authService = inject(AuthService),
-      localStorageService = inject(LocalStorageService),
+      cookieTokenService = inject(CookieTokenService),
       snackBarService = inject(SnackBarService),
     ) => ({
       setLoggedIn(loggedIn: boolean): void {
@@ -56,7 +57,7 @@ export const AuthStore = signalStore(
                     },
                     setFulfilled(),
                   );
-                  localStorageService.setTokens(tokens.access_token, tokens.refresh_token)
+                  cookieTokenService.setTokens(tokens.access_token, tokens.refresh_token)
                 },
                 error: ({ message }: HttpErrorResponse) => {
                   patchState(store, { loggedIn: false }, setError(message));
@@ -90,13 +91,6 @@ export const AuthStore = signalStore(
           ),
         ),
       ),
-
-      // logout: rxMethod<void>(
-      //   pipe(
-      //     tap(()=> patchState(store, setPending())),
-      //     exhaustMap
-      //   )
-      // )
     }),
   ),
 );

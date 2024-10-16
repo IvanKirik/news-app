@@ -1,19 +1,20 @@
 import { HttpEvent, HttpHandlerFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, Observable, switchMap, throwError } from 'rxjs';
-import { LocalStorageService } from '../services';
 import { AuthService } from '../../features/auth/data-access/auth.service';
 import { DefaultResponse } from '../intefaces/default-response.interface';
 import { LoginResponse } from '../../features/auth/data-access/auth.model';
+import { CookieTokenService } from '../services/cookie-token.service';
 
 export const authInterceptor = (
   request: HttpRequest<any>,
   next: HttpHandlerFn,
 ): Observable<HttpEvent<any>> => {
   const authService = inject(AuthService);
-  const localStorageService = inject(LocalStorageService);
-  const tokens = localStorageService.getTokens();
+  const cookieTokenService = inject(CookieTokenService);
+  const tokens = cookieTokenService.getTokens();
   if (tokens && tokens.accessToken) {
+    //todo change backend then rm
     const authRequest = request.clone({
       setHeaders: {
         Authorization: `Bearer ${tokens.accessToken}`,
@@ -31,7 +32,7 @@ export const authInterceptor = (
             next,
             tokens.accessToken!,
             authService,
-            localStorageService,
+            cookieTokenService,
           );
         }
         return throwError(() => error);
@@ -46,7 +47,7 @@ export const handle401Error = (
   next: HttpHandlerFn,
   token: string,
   authService: AuthService,
-  localStorageService: LocalStorageService,
+  cookieTokenService: CookieTokenService,
 ) => {
   return authService.refresh(token).pipe(
     switchMap((result: DefaultResponse | LoginResponse) => {
@@ -62,7 +63,7 @@ export const handle401Error = (
         return throwError(() => new Error(error));
       }
 
-      localStorageService.setTokens(
+      cookieTokenService.setTokens(
         refreshResult.access_token,
         refreshResult.refresh_token,
       );
@@ -76,7 +77,7 @@ export const handle401Error = (
       return next(authRequest);
     }),
     catchError((error) => {
-      localStorageService.removeTokens();
+      cookieTokenService.removeTokens();
       return throwError(() => error);
     }),
   );

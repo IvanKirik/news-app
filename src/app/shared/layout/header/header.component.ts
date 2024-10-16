@@ -20,8 +20,9 @@ import { ButtonDirective } from 'primeng/button';
 import { Ripple } from 'primeng/ripple';
 import { ShowIfNotAuthenticatedDirective } from '../../directives';
 import { RequestStatus } from '../../signal-store-features';
-import { LoaderService, LocalStorageService } from '../../services';
+import { LoaderService } from '../../services';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { CookieTokenService } from '../../services/cookie-token.service';
 
 @Component({
   selector: 'app-header',
@@ -41,7 +42,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private readonly authStore = inject(AuthStore);
   private readonly loaderService = inject(LoaderService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly localStorageService = inject(LocalStorageService);
+  private readonly cookieTokenService = inject(CookieTokenService);
 
   public readonly requestStatus: Signal<RequestStatus> =
     this.authStore.requestStatus;
@@ -118,9 +119,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
       });
   }
 
+  //todo add backend on user exit, change to authStore logout
   public userExit(): void {
-    //todo add backend on user exit, change to authStore logout
-    this.localStorageService.removeTokens();
+    this.cookieTokenService.removeTokens();
     this.authStore.setLoggedOut();
   }
 
