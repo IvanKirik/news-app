@@ -1,15 +1,11 @@
 import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { exhaustMap, pipe, tap } from 'rxjs';
+import { exhaustMap, pipe, switchMap, tap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
 import { authInitialState, AuthState, UserState } from './auth.model';
 import { AuthService } from './auth.service';
-import {
-  LocalStorageService,
-  SnackbarMessageType,
-  SnackBarService,
-} from '../../../shared/services';
+import { SnackbarMessageType, SnackBarService } from '../../../shared/services';
 import {
   setError,
   setFulfilled,
@@ -45,22 +41,18 @@ export const AuthStore = signalStore(
       login: rxMethod<UserState>(
         pipe(
           tap(() => patchState(store, setPending())),
-          exhaustMap((dto: UserState) =>
+          switchMap((dto: UserState) =>
             authService.login(dto).pipe(
               tapResponse({
                 next: (tokens) => {
-                  patchState(
-                    store,
-                    {
-                      loggedIn: true,
-                      user: dto,
-                    },
-                    setFulfilled(),
+                  patchState(store, setFulfilled());
+                  cookieTokenService.setTokens(
+                    tokens.access_token,
+                    tokens.refresh_token,
                   );
-                  cookieTokenService.setTokens(tokens.access_token, tokens.refresh_token)
                 },
                 error: ({ message }: HttpErrorResponse) => {
-                  patchState(store, { loggedIn: false }, setError(message));
+                  patchState(store, setError(message));
                   snackBarService.open(message, SnackbarMessageType.Error);
                 },
               }),
@@ -81,6 +73,33 @@ export const AuthStore = signalStore(
                     'Успешно зарегестрированы',
                     SnackbarMessageType.Success,
                   );
+                },
+                error: ({ message }: HttpErrorResponse) => {
+                  patchState(store, setError(message));
+                  snackBarService.open(message, SnackbarMessageType.Error);
+                },
+              }),
+            ),
+          ),
+        ),
+      ),
+
+      getCurrentUser: rxMethod<void>(
+        pipe(
+          tap(() => patchState(store, setPending())),
+          exhaustMap(() =>
+            authService.getCurrentUser().pipe(
+              tapResponse({
+                next: (response) => {
+                  patchState(
+                    store,
+                    {
+                      loggedIn: true,
+                      userInfo: response,
+                    },
+                    setFulfilled(),
+                  );
+                  snackBarService.open('OPENED', SnackbarMessageType.Success);
                 },
                 error: ({ message }: HttpErrorResponse) => {
                   patchState(store, setError(message));

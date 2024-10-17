@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LoginResponse, UserState } from './auth.model';
+import { LoginResponse, UserInfo, UserState } from './auth.model';
 import { HttpClient } from '@angular/common/http';
 import { Environment } from '../../../shared/intefaces';
 
@@ -17,12 +17,19 @@ export class AuthService {
     return this.http.post<void>(`${this.env.apiUrl}auth/register`, dto);
   }
 
-  //todo implement on bakcend
+  //todo implement on backend
   public logout(): Observable<void> {
     return this.http.post<void>(`${this.env.apiUrl}auth/logout`, {});
   }
 
   public refresh(accessToken: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.env.apiUrl}auth/refresh`, accessToken);
+    return this.http.post<LoginResponse>(
+      `${this.env.apiUrl}auth/refresh`,
+      accessToken,
+    );
+  }
+
+  public getCurrentUser(): Observable<UserInfo> {
+    return this.http.get<UserInfo>(`${this.env.apiUrl}users/me`);
   }
 }

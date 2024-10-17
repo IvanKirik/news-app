@@ -95,6 +95,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     });
     loginSubject$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((dto) => {
       this.authStore.login(dto);
+      this.authStore.getCurrentUser();
     });
   }
 
@@ -128,4 +129,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.currentModal$.unsubscribe();
   }
+
+
+
 }

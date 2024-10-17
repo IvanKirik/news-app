@@ -1,16 +1,18 @@
-export const initialUserValue: UserState = {
-  email: '',
-  password: ''
-};
+export interface UserInfo {
+  id: number;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export const authInitialState: AuthState = {
   loggedIn: false,
-  user: initialUserValue
+  userInfo: null,
 };
 
 export type AuthState = {
   loggedIn: boolean;
-  user: UserState;
+  userInfo: UserInfo | null;
 };
 
 export interface UserState {

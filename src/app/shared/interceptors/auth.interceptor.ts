@@ -25,7 +25,8 @@ export const authInterceptor = (
         if (
           error.status === 401 &&
           !authRequest.url.includes('/login') &&
-          !authRequest.url.includes('/refresh')
+          !authRequest.url.includes('/refresh') &&
+          !authRequest.url.includes('/users/me')
         ) {
           return handle401Error(
             authRequest,
