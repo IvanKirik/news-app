@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { exhaustMap, pipe, switchMap, tap } from 'rxjs';
+import { pipe, switchMap, tap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
 import { authInitialState, AuthState, UserState } from './auth.model';
 import { AuthService } from './auth.service';
@@ -25,24 +25,38 @@ export const AuthStore = signalStore(
       authService = inject(AuthService),
       cookieTokenService = inject(CookieTokenService),
       snackBarService = inject(SnackBarService),
-    ) => ({
-      setLoggedIn(loggedIn: boolean): void {
+    ) => {
+      function loginRequest(dto: UserState) {
+        return authService.login(dto);
+      }
+
+      function registerRequest(dto: UserState) {
+        return authService.register(dto);
+      }
+
+      function getCurrentUserRequest() {
+        return authService.getCurrentUser();
+      }
+
+      function setLoggedIn(loggedIn: boolean): void {
         patchState(store, (state) => ({
           ...state,
           loggedIn,
         }));
-      },
-      setLoggedOut(): void {
+      }
+
+      function setLoggedOut(): void {
         patchState(store, (state) => ({
           ...state,
           loggedIn: false,
         }));
-      },
-      login: rxMethod<UserState>(
+      }
+
+      const login = rxMethod<UserState>(
         pipe(
           tap(() => patchState(store, setPending())),
           switchMap((dto: UserState) =>
-            authService.login(dto).pipe(
+            loginRequest(dto).pipe(
               tapResponse({
                 next: (tokens) => {
                   patchState(store, setFulfilled());
@@ -59,18 +73,18 @@ export const AuthStore = signalStore(
             ),
           ),
         ),
-      ),
+      );
 
-      register: rxMethod<UserState>(
+      const register = rxMethod<UserState>(
         pipe(
           tap(() => patchState(store, setPending())),
-          exhaustMap((dto: UserState) =>
-            authService.register(dto).pipe(
+          switchMap((dto: UserState) =>
+            registerRequest(dto).pipe(
               tapResponse({
                 next: () => {
                   patchState(store, setFulfilled());
                   snackBarService.open(
-                    'Успешно зарегестрированы',
+                    'Успешно зарегистрированы',
                     SnackbarMessageType.Success,
                   );
                 },
@@ -82,13 +96,13 @@ export const AuthStore = signalStore(
             ),
           ),
         ),
-      ),
+      );
 
-      getCurrentUser: rxMethod<void>(
+      const getCurrentUser = rxMethod<void>(
         pipe(
           tap(() => patchState(store, setPending())),
-          exhaustMap(() =>
-            authService.getCurrentUser().pipe(
+          switchMap(() =>
+            getCurrentUserRequest().pipe(
               tapResponse({
                 next: (response) => {
                   patchState(
@@ -109,7 +123,62 @@ export const AuthStore = signalStore(
             ),
           ),
         ),
-      ),
-    }),
+      );
+
+      const loginAndGetCurrentUser = rxMethod<UserState>(
+        pipe(
+          tap(() => patchState(store, setPending())),
+          switchMap((dto: UserState) =>
+            loginRequest(dto).pipe(
+              tapResponse({
+                next: (tokens) => {
+                  cookieTokenService.setTokens(
+                    tokens.access_token,
+                    tokens.refresh_token,
+                  );
+                },
+                error: ({ message }: HttpErrorResponse) => {
+                  patchState(store, setError(message));
+                  snackBarService.open(message, SnackbarMessageType.Error);
+                },
+              }),
+              switchMap(() =>
+                getCurrentUserRequest().pipe(
+                  tapResponse({
+                    next: (response) => {
+                      patchState(
+                        store,
+                        {
+                          loggedIn: true,
+                          userInfo: response,
+                        },
+                        setFulfilled(),
+                      );
+                      snackBarService.open(
+                        'Авторизация успешна!',
+                        SnackbarMessageType.Success,
+                      );
+                    },
+                    error: ({ message }: HttpErrorResponse) => {
+                      patchState(store, setError(message));
+                      snackBarService.open(message, SnackbarMessageType.Error);
+                    },
+                  }),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      return {
+        setLoggedIn,
+        setLoggedOut,
+        login,
+        register,
+        getCurrentUser,
+        loginAndGetCurrentUser,
+      };
+    },
   ),
 );
