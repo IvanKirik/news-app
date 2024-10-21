@@ -22,11 +22,10 @@ export class AuthService {
     return this.http.post<void>(`${this.env.apiUrl}auth/logout`, {});
   }
 
-  public refresh(accessToken: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(
-      `${this.env.apiUrl}auth/refresh`,
-      accessToken,
-    );
+  public refresh(refreshToken: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.env.apiUrl}auth/refresh`, {
+      refreshToken,
+    });
   }
 
   public getCurrentUser(): Observable<UserInfo> {

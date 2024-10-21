@@ -25,13 +25,12 @@ export const authInterceptor = (
         if (
           error.status === 401 &&
           !authRequest.url.includes('/login') &&
-          !authRequest.url.includes('/refresh') &&
-          !authRequest.url.includes('/users/me')
+          !authRequest.url.includes('/refresh')
         ) {
           return handle401Error(
             authRequest,
             next,
-            tokens.accessToken!,
+            tokens.refreshToken!,
             authService,
             cookieTokenService,
           );
@@ -83,67 +82,3 @@ export const handle401Error = (
     }),
   );
 };
-
-// todo any way to use http call from authState and then subscribe
-// export const authInterceptor = (
-//   request: HttpRequest<any>,
-//   next: HttpHandlerFn,
-// ): Observable<HttpEvent<any>> => {
-//   const localStorageService = inject(LocalStorageService);
-//   const authStore = inject(AuthStore); // Inject AuthStore to use its signals
-//   const tokens = localStorageService.getTokens();
-//
-//   if (tokens && tokens.accessToken) {
-//     const authRequest = request.clone({
-//       setHeaders: {
-//         Authorization: `Bearer ${tokens.accessToken}`,
-//       },
-//     });
-//
-//     return next(authRequest).pipe(
-//       catchError((error) => {
-//         if (
-//           error.status === 401 &&
-//           !authRequest.url.includes('/login') &&
-//           !authRequest.url.includes('/refresh')
-//         ) {
-//
-//           authStore.refresh(tokens.refreshToken!);
-//           const isPending = computed(() => authStore.isPending());
-//
-//           // Check if the request is pending and wait for completion
-//           if (isPending()) {
-//             return new Observable<HttpEvent<any>>(observer => {
-//               const checkRefresh = setInterval(() => {
-//                 if (!isPending()) {
-//                   clearInterval(checkRefresh);
-//                   const updatedTokens = localStorageService.getTokens();
-//
-//                   if (updatedTokens?.accessToken) {
-//                     const newAuthRequest = authRequest.clone({
-//                       setHeaders: {
-//                         Authorization: `Bearer ${updatedTokens.accessToken}`,
-//                       },
-//                     });
-//
-//                     // Subscribe to the next call and emit the results
-//                     next(newAuthRequest).subscribe({
-//                       next: (event) => observer.next(event),
-//                       error: (err) => observer.error(err),
-//                       complete: () => observer.complete(),
-//                     });
-//                   } else {
-//                     observer.error(new Error('Token refresh failed.'));
-//                   }
-//                 }
-//               }, 100); // Check every 100ms
-//             });
-//           }
-//         }
-//         return throwError(() => error);
-//       })
-//     );
-//   }
-//
-//   return next(request);
-// };
